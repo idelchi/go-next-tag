@@ -1,13 +1,13 @@
 version: "3.8"
 
 services:
-  devenv:
+  build:
     build:
       context: .
     pull_policy: if_not_present
     image: common-docker-local.bin.swisscom.com/go-next-tag:dev
-    container_name: devenv
-    hostname: devenv
+    container_name: go-next-tag
+    hostname: go-next-tag
     network_mode: bridge
     user: user
     volumes:

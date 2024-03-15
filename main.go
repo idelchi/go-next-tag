@@ -56,24 +56,24 @@ func main() { //nolint: funlen,cyclop
 	}
 
 	if err := action.validate(allowedBumps, allowedFormats); err != nil {
-		log.Fatalf("Error validating action: %s", err)
+		log.Fatalf("error validating action: %s", err)
 	}
 
 	// Initialize a new GitManager with the provided flags.
 	gitManager, err := NewGitManager()
 	if err != nil {
-		log.Fatalf("Error initializing GitManager: %s", err)
+		log.Fatalf("error initializing GitManager: %s", err)
 	}
 
 	// Configure git with the provided settings.
 	if err := gitManager.ConfigureGit(user); err != nil {
-		log.Fatalf("Error configuring Git: %s", err)
+		log.Fatalf("error configuring Git: %s", err)
 	}
 
 	// Calculate the next tag based on the current repository state and the bump strategy.
 	tag, err := gitManager.CalculateNextTag(action.Bump)
 	if err != nil {
-		log.Fatalf("Error calculating next tag: %s", err)
+		log.Fatalf("error calculating next tag: %s", err)
 	}
 
 	var tagString string
@@ -89,7 +89,7 @@ func main() { //nolint: funlen,cyclop
 
 	// Create the calculated tag.
 	if err := gitManager.CreateTag(tagString); err != nil {
-		log.Fatalf("Error creating tag: %s", err)
+		log.Fatalf("error creating tag: %s", err)
 	}
 
 	// If the push flag is not set, exit.
@@ -99,7 +99,7 @@ func main() { //nolint: funlen,cyclop
 
 	// Push the tag to the remote repository.
 	if err := gitManager.PushTag(tagString, credentials.Token); err != nil {
-		log.Fatalf("Error pushing tag: %s", err)
+		log.Fatalf("error pushing tag: %s", err)
 	}
 
 	log.Printf("Tag %q pushed successfully.\n", tagString)
