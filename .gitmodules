@@ -1,0 +1,4 @@
+[submodule ".config"]
+	path = .config
+	url = ../code-quality-kit.git
+	branch = main

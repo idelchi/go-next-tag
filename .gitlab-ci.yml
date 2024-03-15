@@ -1,0 +1,103 @@
+variables:
+  GROUP_NAME: opa-styra-compliance-management-for-b2b
+
+workflow:
+  rules:
+    - when: always
+
+include:
+  - project: swisscom/scsa-shared-tools/templates
+    ref: feature/experiments
+    file:
+      - proxy.gitlab-ci.yml
+      - registry.gitlab-ci.yml
+      - kaniko-build.gitlab-ci.yml
+      - tag.v2.gitlab-ci.yml
+
+stages:
+  - quality
+  - test
+  - build
+  - release
+
+# Lint all files in the repository
+lint:
+  stage: quality
+  image: $DOCKER_REGISTRY_COMMON/style:dev
+  script:
+    - task lint
+
+go:
+  stage: quality
+  image: $DOCKER_REGISTRY_COMMON/go:dev
+  script:
+    - task go:lint
+
+container:
+  stage: test
+  extends: .kaniko-build
+  variables:
+    IMAGE: devenv
+    TAG: $CI_PROJECT_NAME/$CI_COMMIT_REF_NAME/$CI_COMMIT_SHA
+    DOCKERFILE: Dockerfile
+    CI_REGISTRY_DOCKER: ${DOCKER_REGISTRY_DUMPSTER}
+    IMAGE_ENV_VAR: DEVENV
+    ARGS: >
+      --build-arg GO_NEXT_TAG_VERSION=$CI_COMMIT_REF_NAME-$CI_COMMIT_SHA
+
+# Run the python test suite
+test:
+  except:
+    - tags
+  stage: test
+  image: $DEVENV
+  script:
+    - go-next-tag --bump=patch --format semver
+    - go-next-tag --bump=minor --format semver
+    - go-next-tag --bump=major --format semver
+  needs:
+    - container
+  variables:
+    GO_NEXT_TAG_TOKEN: $GIT_ACCESS_TOKEN
+    GO_NEXT_TAG_USER_NAME: gitlab
+    GO_NEXT_TAG_USER_EMAIL: gitlab@swisscom.com
+
+docker:
+  stage: build
+  rules:
+    - if: $CI_COMMIT_TAG
+      variables:
+        TAG: $CI_COMMIT_TAG
+
+    - if: $CI_COMMIT_REF_NAME == "main"
+      variables:
+        TAG: latest
+
+    - if: $CI_COMMIT_BRANCH
+      variables:
+        TAG: $CI_COMMIT_BRANCH
+        ARGS: >
+          --build-arg GO_NEXT_TAG_VERSION=$CI_COMMIT_REF_NAME
+
+    - when: always
+      variables:
+        TAG: $CI_PROJECT_NAME
+        ARGS: >
+          --no-push
+  extends: .kaniko-build
+  parallel:
+    matrix:
+      - CI_REGISTRY_DOCKER: $DOCKER_REGISTRY_ART_COMMON
+      - CI_REGISTRY_DOCKER: $DOCKER_REGISTRY_BIN_COMMON
+  variables:
+    DOCKERFILE: Dockerfile
+    IMAGE: go-next-tag
+    ARGS: >
+      --build-arg GO_NEXT_TAG_VERSION=$CI_COMMIT_REF_NAME
+
+release:
+  stage: release
+  extends: .tag-and-push
+  variables:
+    ARGS: >
+      --push

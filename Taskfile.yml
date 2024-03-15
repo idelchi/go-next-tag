@@ -1,0 +1,30 @@
+version: "3"
+
+vars:
+  DEVENV: .config
+  CONFIG_DIR: "{{.DEVENV}}/settings"
+  SCRIPTS_DIR: "{{.DEVENV}}/scripts"
+  BUILD_DIR: .build
+
+includes:
+  aux:
+    taskfile: "{{.DEVENV}}/taskfiles/Taskfile.aux.yml"
+    dir: "$PWD"
+  git:
+    taskfile: "{{.DEVENV}}/taskfiles/Taskfile.git.yml"
+    dir: "$PWD"
+  lint:
+    taskfile: "{{.DEVENV}}/taskfiles/Taskfile.lint.yml"
+    dir: "$PWD"
+  format:
+    taskfile: "{{.DEVENV}}/taskfiles/Taskfile.format.yml"
+    dir: "$PWD"
+  go:
+    taskfile: "{{.DEVENV}}/taskfiles/Taskfile.go.yml"
+    dir: "$PWD"
+    vars:
+      COVERAGE: 0.0%
+
+silent: true
+
+output: prefixed
