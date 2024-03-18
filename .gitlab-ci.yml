@@ -62,12 +62,15 @@ test:
   stage: test
   image: $DEVENV
   script:
-    - go-next-tag --bump=patch
-    - go-next-tag --bump=minor
-    - go-next-tag --bump=major
-    - go-next-tag --bump=patch --format semver
-    - go-next-tag --bump=minor --format semver
-    - go-next-tag --bump=major --format semver
+    - go-next-tag $ARGS
+  parallel:
+    matrix:
+      - ARGS: --bump=patch
+      - ARGS: --bump=minor
+      - ARGS: --bump=major
+      - ARGS: --bump=patch --format semver
+      - ARGS: --bump=minor --format semver
+      - ARGS: --bump=major --format semver
   needs:
     - container
   variables:
@@ -104,7 +107,7 @@ docker:
     DOCKERFILE: Dockerfile
     IMAGE: go-next-tag
     ARGS: >
-      --build-arg GO_NEXT_TAG_VERSION=$CI_COMMIT_REF_NAME
+      --build-arg GO_NEXT_TAG_VERSION=$CI_COMMIT_REF_NAME-$CI_COMMIT_SHA
 
 release:
   stage: release

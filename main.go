@@ -1,4 +1,5 @@
 // go-next-tag is a simple command-line application for managing version tagging in a git repository.
+// Allows for the automatic calculation of the next tag based on the current repository state and the bump strategy.
 package main
 
 import (
@@ -60,7 +61,7 @@ func main() { //nolint: funlen,cyclop
 	}
 
 	// Initialize a new GitManager with the provided flags.
-	gitManager, err := NewGitManager()
+	gitManager, err := NewGitManager(credentials.Token)
 	if err != nil {
 		log.Fatalf("error initializing GitManager: %s", err)
 	}
@@ -98,7 +99,7 @@ func main() { //nolint: funlen,cyclop
 	}
 
 	// Push the tag to the remote repository.
-	if err := gitManager.PushTag(tagString, credentials.Token); err != nil {
+	if err := gitManager.PushTag(tagString); err != nil {
 		log.Fatalf("error pushing tag: %s", err)
 	}
 

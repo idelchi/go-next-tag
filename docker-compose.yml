@@ -4,6 +4,8 @@ services:
   build:
     build:
       context: .
+      args:
+        - GO_NEXT_TAG_VERSION=local
     pull_policy: if_not_present
     image: common-docker-local.bin.swisscom.com/go-next-tag:dev
     container_name: go-next-tag

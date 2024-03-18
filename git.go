@@ -17,17 +17,24 @@ import (
 // including tagging and configuration.
 type GitManager struct {
 	repo *git.Repository // repo represents the Git repository managed by this GitManager.
+
+	auth *http.BasicAuth
 }
 
 // NewGitManager initializes a new GitManager by opening the current Git repository.
 // It returns a pointer to the GitManager and any error encountered.
-func NewGitManager() (gm *GitManager, err error) {
+func NewGitManager(token string) (gm *GitManager, err error) {
 	gm = &GitManager{}
 
 	// Attempt to open the current directory as a Git repository.
 	gm.repo, err = git.PlainOpen(".")
 	if err != nil {
 		return nil, fmt.Errorf("opening repository at '.': %w", err)
+	}
+
+	gm.auth = &http.BasicAuth{
+		Username: "user",
+		Password: token,
 	}
 
 	return gm, nil
@@ -52,9 +59,9 @@ func (gm *GitManager) ConfigureGit(user User) error {
 	return nil
 }
 
-// GetTag retrieves the latest tag from the repository and returns it as a semver.Version.
+// GetLatestTag retrieves the latest tag from the repository and returns it as a semver.Version.
 // It fetches tags from the remote repository and identifies the latest one.
-func (gm *GitManager) GetTag() (*semver.Version, error) {
+func (gm *GitManager) GetLatestTag() (*semver.Version, error) {
 	// Fetch tags from the remote repository.
 	if err := gm.repo.Fetch(&git.FetchOptions{}); err != nil && !errors.Is(err, git.NoErrAlreadyUpToDate) {
 		return nil, fmt.Errorf("fetching tags: %w", err)
@@ -88,9 +95,9 @@ func (gm *GitManager) GetTag() (*semver.Version, error) {
 }
 
 // CalculateNextTag generates the next tag based on the current latest tag and the specified bump rule.
-// It supports semantic versioning and a simplified major.minor format.
+// It supports semantic versioning and a simplified <major.minor> format.
 func (gm *GitManager) CalculateNextTag(bump string) (semver.Version, error) {
-	latest, err := gm.GetTag()
+	latest, err := gm.GetLatestTag()
 	if err != nil {
 		return semver.Version{}, err
 	}
@@ -147,7 +154,7 @@ func (gm *GitManager) CreateTag(tag string) error {
 }
 
 // PushTag pushes the specified tag to the remote repository.
-func (gm *GitManager) PushTag(tag, token string) error {
+func (gm *GitManager) PushTag(tag string) error {
 	remote, err := gm.repo.Remote("origin")
 	if err != nil {
 		return fmt.Errorf("getting remote: %w", err)
@@ -159,10 +166,7 @@ func (gm *GitManager) PushTag(tag, token string) error {
 		RefSpecs: []config.RefSpec{
 			config.RefSpec("refs/tags/" + tag + ":refs/tags/" + tag),
 		},
-		Auth: &http.BasicAuth{
-			Username: "user",
-			Password: token,
-		},
+		Auth: gm.auth,
 	})
 	if err != nil {
 		return fmt.Errorf("pushing tag: %w", err)

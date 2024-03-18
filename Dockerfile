@@ -1,11 +1,12 @@
 #[=======================================================================[
-# Description : Docker image containing various experimental tooling
+# Description : Docker image containing the go-next-tag binary
 #]=======================================================================]
 
 # Docker image repository to use. Use `docker.io` for public images.
 ARG IMAGE_BASE_REGISTRY
 
-FROM ${IMAGE_BASE_REGISTRY}golang:1.22.0 as build
+#### ---- Build ---- ####
+FROM ${IMAGE_BASE_REGISTRY}golang:1.22.1-alpine3.19 as build
 
 LABEL maintainer=arash.idelchi
 
@@ -13,10 +14,12 @@ LABEL maintainer=arash.idelchi
 # hadolint ignore=DL3002
 USER root
 
-ARG DEBIAN_FRONTEND=noninteractive
-
 # Basic good practices
-SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+SHELL ["/bin/ash", "-o", "pipefail", "-c"]
+
+# timezone
+RUN apk add --no-cache \
+    tzdata==2024a-r0
 
 WORKDIR /work
 
@@ -27,24 +30,47 @@ COPY . /work/
 ARG GO_NEXT_TAG_VERSION="unofficial & built by unknown"
 RUN go install -ldflags="-s -w -X 'main.version=${GO_NEXT_TAG_VERSION}'" ./...
 
-FROM ${IMAGE_BASE_REGISTRY}debian:bookworm-slim
+# Create User (Alpine)
+ARG USER=user
+RUN addgroup -S -g 1001 ${USER} && \
+    adduser -S -u 1001 -G ${USER} -h /home/${USER} -s /bin/ash ${USER}
+
+# Timezone
+ENV TZ=Europe/Zurich
+
+#### ---- Standalone ---- ####
+FROM scratch as standalone
+
+LABEL maintainer=arash.idelchi
+
+# Copy artifacts from the build stage
+COPY --from=build /etc/passwd /etc/passwd
+COPY --from=build /usr/share/zoneinfo /usr/share/zoneinfo
+COPY --from=build /go/bin/go-next-tag /go-next-tag
+
+USER ${USER}
+WORKDIR /home/${USER}
+
+# Clear the base image entrypoint
+ENTRYPOINT ["/go-next-tag"]
+CMD [""]
+
+# Timezone
+ENV TZ=Europe/Zurich
+
+#### ---- App ---- ####
+FROM ${IMAGE_BASE_REGISTRY}alpine:3.19
 
 LABEL maintainer=arash.idelchi
 
 USER root
 
-ARG DEBIAN_FRONTEND=noninteractive
+# timezone
+RUN apk add --no-cache \
+    tzdata==2024a-r0
 
-# Basic tooling
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    ca-certificates \
-    && apt-get clean && rm -rf /var/lib/apt/lists/*
-
-# Create User (Debian/Ubuntu)
-ARG USER=user
-RUN groupadd -r -g 1001 ${USER} && \
-    useradd -r -u 1001 -g 1001 -m -c "${USER} account" -d /home/${USER} -s /bin/bash ${USER}
-
+# Copy artifacts from the build stage
+COPY --from=build /etc/passwd /etc/passwd
 COPY --from=build /go/bin/go-next-tag /usr/local/bin/go-next-tag
 
 USER ${USER}
@@ -52,7 +78,7 @@ WORKDIR /home/${USER}
 
 # Clear the base image entrypoint
 ENTRYPOINT [""]
-CMD ["/bin/bash"]
+CMD ["/bin/ash"]
 
 # Timezone
 ENV TZ=Europe/Zurich
