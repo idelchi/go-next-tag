@@ -29,7 +29,7 @@ lint:
   except:
     - tags
   stage: quality
-  image: $DOCKER_REGISTRY_COMMON/style:dev
+  image: $DOCKER_REGISTRY_COMMON/style:latest
   script:
     - task lint
 
@@ -37,7 +37,7 @@ go:
   except:
     - tags
   stage: quality
-  image: $DOCKER_REGISTRY_COMMON/go:dev
+  image: $DOCKER_REGISTRY_COMMON/go:latest
   script:
     - task go:lint
 
@@ -93,7 +93,7 @@ docker:
       variables:
         TAG: $CI_COMMIT_BRANCH
 
-    - when: always
+    - when: on_success
       variables:
         TAG: $CI_PROJECT_NAME
         ARGS: >
