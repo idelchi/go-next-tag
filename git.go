@@ -72,26 +72,29 @@ func (gm *GitManager) GetLatestTag() (*semver.Version, error) {
 		return nil, fmt.Errorf("getting tags: %w", err)
 	}
 
-	var latestTag *plumbing.Reference
+	var latestVersion *semver.Version
 	// Iterate over tags to find the latest.
-	_ = tags.ForEach(func(t *plumbing.Reference) error {
-		if latestTag == nil || t.Name().Short() > latestTag.Name().Short() {
-			latestTag = t
+	err = tags.ForEach(func(t *plumbing.Reference) error {
+		version, err := semver.NewVersion(t.Name().Short())
+		if err != nil {
+			return fmt.Errorf("parsing tag %q: %w", t.Name().Short(), err)
+		}
+
+		if latestVersion == nil || version.GreaterThan(latestVersion) {
+			latestVersion = version
 		}
 
 		return nil
 	})
+	if err != nil {
+		return nil, fmt.Errorf("iterating over tags: %w", err)
+	}
 
-	if latestTag == nil {
+	if latestVersion == nil {
 		return &semver.Version{}, nil
 	}
 
-	version, err := semver.NewVersion(latestTag.Name().Short())
-	if err != nil {
-		return nil, fmt.Errorf("parsing version: %w", err)
-	}
-
-	return version, nil
+	return latestVersion, nil
 }
 
 // CalculateNextTag generates the next tag based on the current latest tag and the specified bump rule.

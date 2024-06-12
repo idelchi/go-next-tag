@@ -7,18 +7,10 @@ vars:
   BUILD_DIR: .build
 
 includes:
-  aux:
-    taskfile: "{{.DEVENV}}/taskfiles/Taskfile.aux.yml"
-    dir: "$PWD"
-  git:
-    taskfile: "{{.DEVENV}}/taskfiles/Taskfile.git.yml"
-    dir: "$PWD"
-  lint:
-    taskfile: "{{.DEVENV}}/taskfiles/Taskfile.lint.yml"
-    dir: "$PWD"
-  format:
-    taskfile: "{{.DEVENV}}/taskfiles/Taskfile.format.yml"
-    dir: "$PWD"
+  aux: "{{.DEVENV}}/taskfiles/Taskfile.aux.yml"
+  git: "{{.DEVENV}}/taskfiles/Taskfile.git.yml"
+  lint: "{{.DEVENV}}/taskfiles/Taskfile.lint.yml"
+  format: "{{.DEVENV}}/taskfiles/Taskfile.format.yml"
   go:
     taskfile: "{{.DEVENV}}/taskfiles/Taskfile.go.yml"
     dir: "$PWD"
