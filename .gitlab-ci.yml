@@ -100,6 +100,7 @@ docker:
   variables:
     DOCKERFILE: Dockerfile
     DOCKER_IMAGE: go-next-tag
+    DOCKER_IMAGE_ENV_VAR: go_next_tag
     DOCKER_REGISTRY: $DOCKER_REGISTRY_ART_COMMON
     DOCKER_REGISTRY_MIRRORS: >
       $DOCKER_REGISTRY_BIN_COMMON

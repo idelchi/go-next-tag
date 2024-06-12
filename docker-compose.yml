@@ -1,16 +1,12 @@
-version: "3.8"
-
 services:
   build:
     build:
-      context: .
       args:
         - GO_NEXT_TAG_VERSION=local
     pull_policy: if_not_present
     image: common-docker-local.bin.swisscom.com/go-next-tag:dev
     container_name: go-next-tag
     hostname: go-next-tag
-    network_mode: bridge
     user: user
     volumes:
       - .:/home/user/ws
@@ -25,8 +21,6 @@ services:
     image: common-docker-local.bin.swisscom.com/${IMAGE}:dev
     container_name: kit
     hostname: kit
-    network_mode: bridge
-    user: ci
     volumes:
       - $PWD:/home/ci/ws
     extra_hosts:
