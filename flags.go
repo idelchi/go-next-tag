@@ -68,7 +68,7 @@ func parseFlags() (cfg Config, err error) {
 
 	// Unmarshal the configuration into the Config struct
 	if err := viper.Unmarshal(&cfg); err != nil {
-		return cfg, fmt.Errorf("unmarshaling config: %w", err)
+		return cfg, fmt.Errorf("unmarshalling config: %w", err)
 	}
 
 	handleExitFlags(cfg)

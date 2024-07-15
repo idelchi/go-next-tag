@@ -16,11 +16,16 @@ type Config struct {
 	Token string `validate:"required"` // Access token to authenticate to the git server
 
 	Action struct {
-		Bump     string `validate:"required,oneof=patch minor major none"` // The type of bump to perform
-		Push     bool   // Whether to push the tag to the remote repository
-		Format   string `validate:"required,oneof=majorminor semver"` // The format of the tag
-		Prefix   string // The prefix to use for the tag
-		Checkout string `validate:"omitempty,checkoutformat"` // Whether to checkout, and if so, the branch name and the commit hash, separated by a space
+		// The type of bump to perform
+		Bump string `validate:"required,oneof=patch minor major none"`
+		// Whether to push the tag to the remote repository
+		Push bool
+		// The format of the tag
+		Format string `validate:"required,oneof=majorminor semver"`
+		// The prefix to use for the tag
+		Prefix string
+		// Whether to checkout, and if so, the branch name and the commit hash, separated by a space
+		Checkout string `validate:"omitempty,checkoutformat"`
 	}
 
 	Verbose bool   // Verbose mode
@@ -54,5 +59,7 @@ func validateCheckoutFormat(fl validator.FieldLevel) bool {
 	}
 
 	parts := strings.Split(value, " ")
+
+	//nolint:mnd // We expect exactly two parts
 	return len(parts) == 2
 }

@@ -39,9 +39,24 @@ func main() { //nolint: funlen,cyclop
 		os.Getenv("GO_NEXT_TAG_TOKEN"),
 		"Access token to authenticate to the git server.",
 	)
-	flag.StringVar(&cfg.User.Name, "user-name", os.Getenv("GO_NEXT_TAG_USER_NAME"), "Username to use for git operations.")
-	flag.StringVar(&cfg.User.Email, "user-email", os.Getenv("GO_NEXT_TAG_USER_EMAIL"), "Email to use for git operations.")
-	flag.StringVar(&cfg.Action.Bump, "bump", "patch", fmt.Sprintf("Bump the next tag. Possible values: %v", allowedBumps))
+	flag.StringVar(
+		&cfg.User.Name,
+		"user-name",
+		os.Getenv("GO_NEXT_TAG_USER_NAME"),
+		"Username to use for git operations.",
+	)
+	flag.StringVar(
+		&cfg.User.Email,
+		"user-email",
+		os.Getenv("GO_NEXT_TAG_USER_EMAIL"),
+		"Email to use for git operations.",
+	)
+	flag.StringVar(
+		&cfg.Action.Bump,
+		"bump",
+		"patch",
+		fmt.Sprintf("Bump the next tag. Possible values: %v", allowedBumps),
+	)
 	flag.BoolVar(&cfg.Action.Push, "push", false, "Push the tag to the remote repository.")
 	flag.StringVar(
 		&cfg.Action.Checkout,

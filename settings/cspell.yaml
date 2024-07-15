@@ -1,0 +1,6 @@
+dictionaries:
+  - go-next-tag-words
+
+dictionaryDefinitions:
+  - name: go-next-tag-words
+    path: project-words

@@ -121,4 +121,3 @@
 // TODO: https://code.visualstudio.com/docs/editor/intellisense
 // Export a list of extensions:
 // code --list-extensions | xargs -L 1 echo code --install-extension
-

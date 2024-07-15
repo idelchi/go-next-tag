@@ -10,7 +10,7 @@ FROM ${IMAGE_BASE_REGISTRY}golang:1.22.5-alpine3.20 as build
 
 LABEL maintainer=arash.idelchi
 
-# (can use root througout the image since it's a staged build)
+# (can use root throughout the image since it's a staged build)
 # hadolint ignore=DL3002
 USER root
 
@@ -82,4 +82,3 @@ CMD ["/bin/ash"]
 
 # Timezone
 ENV TZ=Europe/Zurich
-
