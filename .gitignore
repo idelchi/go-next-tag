@@ -11,4 +11,7 @@
 .build
 .cache
 .task
-.vscode
+.exp
+.mypy_cache
+.pytests
+.secrets

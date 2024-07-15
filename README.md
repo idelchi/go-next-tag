@@ -22,13 +22,13 @@ version tag to your git repository.
 
 Clone the repository and build the binary with:
 
-    git clone ssh://git@code.swisscom.com:2222/swisscom/scsa-shared-tools/go-next-tag.git
+    git clone https://github.com/idelchi/go-next-tag.git
     cd go-next-tag
     go build -o go-next-tag .
 
 Alternatively, you can install it directly using:
 
-    go install code.swisscom.com/swisscom/scsa-shared-tools/go-next-tag@latest
+    go install github.com/idelchi/go-next-tag.git@latest
 
 ### Usage
 
@@ -47,11 +47,11 @@ Example:
 
     go-next-tag \
         --token <your_access_token> \
-        --user-name <your_username> \
-        --user-email <your_email> \
-        --bump minor \
-        --format semver \
-        --prefix v \
+        --user.name <your_username> \
+        --user.email <your_email> \
+        --action.bump minor \
+        --action.format semver \
+        --action.prefix v \
         --push
 
 For more details on usage and configuration, run:
@@ -59,3 +59,7 @@ For more details on usage and configuration, run:
     go-next-tag --help
 
 This will display a comprehensive list of flags and their descriptions.
+
+## TODOs
+
+- Cache `go` steps in the GitHub Actions workflow.

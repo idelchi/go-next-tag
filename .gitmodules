@@ -1,4 +1,4 @@
-[submodule ".config"]
-	path = .config
-	url = ../code-quality-kit.git
-	branch = main
+[submodule ".devenv"]
+	branch = dev
+	path = .devenv
+	url = https://github.com/idelchi/devenv

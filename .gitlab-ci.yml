@@ -1,13 +1,10 @@
-variables:
-  GROUP_NAME: opa-styra-compliance-management-for-b2b
-
 workflow:
   rules:
     - when: always
 
 include:
-  - project: swisscom/scsa-shared-tools/templates
-    ref: main
+  - project: <company>/scsa-shared-tools/templates
+    ref: feature/experiments
     file:
       - proxy.gitlab-ci.yml
       - registry.gitlab-ci.yml
@@ -87,6 +84,9 @@ docker:
       variables:
         DOCKER_TAG: latest
 
+    # TODO(Idelchi): MRs are being identified with the `branch-name`.
+    # Should avoid that - check $CI_COMMIT_REF_NAME for MRs, and exclude using appropriate condition.
+
     - if: $CI_COMMIT_REF_NAME == "dev"
       variables:
         DOCKER_TAG: $CI_COMMIT_REF_NAME
@@ -110,3 +110,4 @@ docker:
 release:
   stage: release
   extends: .tag-and-push
+

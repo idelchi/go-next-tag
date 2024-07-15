@@ -6,7 +6,7 @@
 ARG IMAGE_BASE_REGISTRY
 
 #### ---- Build ---- ####
-FROM ${IMAGE_BASE_REGISTRY}golang:1.22.1-alpine3.19 as build
+FROM ${IMAGE_BASE_REGISTRY}golang:1.22.5-alpine3.20 as build
 
 LABEL maintainer=arash.idelchi
 
@@ -23,10 +23,10 @@ RUN apk add --no-cache \
 
 WORKDIR /work
 
-COPY go.mod go.sum /work/
+COPY go.mod go.sum ./
 RUN go mod download
 
-COPY . /work/
+COPY . .
 ARG GO_NEXT_TAG_VERSION="unofficial & built by unknown"
 RUN go install -ldflags="-s -w -X 'main.version=${GO_NEXT_TAG_VERSION}'" ./...
 
@@ -59,7 +59,7 @@ CMD [""]
 ENV TZ=Europe/Zurich
 
 #### ---- App ---- ####
-FROM ${IMAGE_BASE_REGISTRY}alpine:3.19
+FROM ${IMAGE_BASE_REGISTRY}alpine:3.20
 
 LABEL maintainer=arash.idelchi
 
@@ -82,3 +82,4 @@ CMD ["/bin/ash"]
 
 # Timezone
 ENV TZ=Europe/Zurich
+

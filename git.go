@@ -42,18 +42,48 @@ func NewGitManager(token string) (gm *GitManager, err error) {
 
 // ConfigureGit sets the username and email for Git operations within the repository.
 // It applies the configuration globally for the repository.
-func (gm *GitManager) ConfigureGit(user User) error {
+func (gm *GitManager) ConfigureGit(user, email string) error {
 	cfg, err := gm.repo.Config()
 	if err != nil {
 		return fmt.Errorf("getting configuration: %w", err)
 	}
 
 	// Set user name and email in the Git configuration.
-	cfg.Raw.Section("user").SetOption("name", user.Name)
-	cfg.Raw.Section("user").SetOption("email", user.Email)
+	cfg.Raw.Section("user").SetOption("name", user)
+	cfg.Raw.Section("user").SetOption("email", email)
 
 	if err := gm.repo.Storer.SetConfig(cfg); err != nil {
 		return fmt.Errorf("setting configuration: %w", err)
+	}
+
+	return nil
+}
+
+// Checkout switches the current working directory to the specified branch or commit.
+func (gm *GitManager) Checkout(branch, commit string) error {
+	// Fetch the latest changes from the remote repository
+	err := gm.repo.Fetch(&git.FetchOptions{
+		Auth: gm.auth,
+	})
+	if err != nil && !errors.Is(err, git.NoErrAlreadyUpToDate) {
+		return fmt.Errorf("fetching changes: %w", err)
+	}
+
+	// Branch does not exist, attempt to checkout as a new branch
+	workTree, err := gm.repo.Worktree()
+	if err != nil {
+		return fmt.Errorf("getting worktree: %w", err)
+	}
+
+	// Checkout options with Create set to true to allow creating a new branch
+	opts := &git.CheckoutOptions{
+		Force:  true,                                    // Force checkout, discarding local changes (if necessary)
+		Branch: plumbing.NewBranchReferenceName(branch), // The branch to checkout or create
+		Hash:   plumbing.NewHash(commit),                // The commit hash to checkout
+	}
+
+	if err = workTree.Checkout(opts); err != nil {
+		return fmt.Errorf("checking out branch and commit: %w", err)
 	}
 
 	return nil
