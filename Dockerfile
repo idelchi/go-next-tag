@@ -19,7 +19,7 @@ SHELL ["/bin/ash", "-o", "pipefail", "-c"]
 
 # timezone
 RUN apk add --no-cache \
-    tzdata==2024a-r0
+    tzdata
 
 WORKDIR /work
 
@@ -67,7 +67,7 @@ USER root
 
 # timezone
 RUN apk add --no-cache \
-    tzdata==2024a-r0
+    tzdata
 
 # Copy artifacts from the build stage
 COPY --from=build /etc/passwd /etc/passwd
