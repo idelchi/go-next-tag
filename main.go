@@ -3,7 +3,6 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"log"
 	"log/slog"
@@ -26,66 +25,6 @@ func main() { //nolint: funlen,cyclop
 		slog.Error("Validating configuration", "error", err)
 
 		os.Exit(1)
-	}
-
-	allowedBumps := []string{"patch", "minor", "major", "none"}
-	allowedFormats := []string{"majorminor", "semver"}
-
-	// Define command-line flags for the application.
-	versionFlag := flag.Bool("version", false, "Show the version information")
-	flag.StringVar(
-		&cfg.Token,
-		"token",
-		os.Getenv("GO_NEXT_TAG_TOKEN"),
-		"Access token to authenticate to the git server.",
-	)
-	flag.StringVar(
-		&cfg.User.Name,
-		"user-name",
-		os.Getenv("GO_NEXT_TAG_USER_NAME"),
-		"Username to use for git operations.",
-	)
-	flag.StringVar(
-		&cfg.User.Email,
-		"user-email",
-		os.Getenv("GO_NEXT_TAG_USER_EMAIL"),
-		"Email to use for git operations.",
-	)
-	flag.StringVar(
-		&cfg.Action.Bump,
-		"bump",
-		"patch",
-		fmt.Sprintf("Bump the next tag. Possible values: %v", allowedBumps),
-	)
-	flag.BoolVar(&cfg.Action.Push, "push", false, "Push the tag to the remote repository.")
-	flag.StringVar(
-		&cfg.Action.Checkout,
-		"checkout",
-		"",
-		"Checkout the branch name and the commit hash, separated by a space",
-	)
-	flag.StringVar(
-		&cfg.Action.Format,
-		"format",
-		"majorminor",
-		fmt.Sprintf("The format of the tag. Possible values: %v", allowedFormats),
-	)
-	flag.StringVar(&cfg.Action.Prefix, "prefix", "v", "The prefix to use for the tag")
-
-	// Custom usage function to provide more detailed help text.
-	flag.Usage = func() {
-		fmt.Println("Usage: go-next-tag [flags]")
-		fmt.Println("Flags:")
-		flag.PrintDefaults()
-	}
-
-	// Parse the command-line flags.
-	flag.Parse()
-
-	// If the version flag is provided, print the version and exit.
-	if *versionFlag {
-		fmt.Println(version)
-		os.Exit(0)
 	}
 
 	// Initialize a new GitManager with the provided flags.
@@ -124,7 +63,7 @@ func main() { //nolint: funlen,cyclop
 		tagString = fmt.Sprintf("%s%d.%d", cfg.Action.Prefix, tag.Major(), tag.Minor())
 	}
 
-	log.Printf("Next tag: %s\n", tagString)
+	slog.Info("Next tag", "tag", tagString)
 
 	// Create the calculated tag.
 	if err := gitManager.CreateTag(tagString); err != nil {

@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"log"
+	"log/slog"
 	"os"
 	"strings"
 
@@ -19,16 +19,16 @@ func flags() {
 	pflag.BoolP("show", "s", false, "Show the configuration and exit")
 
 	// User flags
-	pflag.String("user-name", "", "Username to use for git operations")
-	pflag.String("user-email", "", "Email to use for git operations")
+	pflag.String("user.name", "", "Username to use for git operations")
+	pflag.String("user.email", "", "Email to use for git operations")
 	pflag.String("token", "", "Access token to authenticate to the git server")
 
 	// Action flags
-	pflag.String("bump", "patch", "Bump the next tag. Possible values: patch, minor, major, none")
-	pflag.Bool("push", false, "Push the tag to the remote repository")
-	pflag.String("format", "majorminor", "The format of the tag. Possible values: majorminor, semver")
-	pflag.String("prefix", "v", "The prefix to use for the tag")
-	pflag.String("checkout", "", "Checkout the branch name and the commit hash, separated by a space")
+	pflag.String("action.bump", "patch", "Bump the next tag. Possible values: patch, minor, major, none")
+	pflag.Bool("action.push", false, "Push the tag to the remote repository")
+	pflag.String("action.format", "majorminor", "The format of the tag. Possible values: majorminor, semver")
+	pflag.String("action.prefix", "v", "The prefix to use for the tag")
+	pflag.String("action.checkout", "", "Checkout the branch name and the commit hash, separated by a space")
 
 	// Global flags
 	pflag.BoolP("verbose", "v", false, "Verbose mode")
@@ -73,6 +73,9 @@ func parseFlags() (cfg Config, err error) {
 
 	handleExitFlags(cfg)
 
+	// Set the default logger verbosity and output mode
+	slog.SetDefault(ConfigureLogger(cfg.Verbose, cfg.Output))
+
 	return cfg, nil
 }
 
@@ -91,7 +94,8 @@ func handleExitFlags(cfg Config) {
 	}
 
 	if viper.GetBool("show") {
-		log.Println(cfg)
+		fmt.Println(PrintJSONMasked(cfg))
+
 		os.Exit(0)
 	}
 }

@@ -13,7 +13,7 @@ type Config struct {
 		Name  string `validate:"required"`       // The name to use for git operations
 		Email string `validate:"required,email"` // The email to use for git operations
 	}
-	Token string `validate:"required"` // Access token to authenticate to the git server
+	Token string `validate:"required" mask:"fixed"` // Access token to authenticate to the git server
 
 	Action struct {
 		// The type of bump to perform

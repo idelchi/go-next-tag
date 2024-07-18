@@ -6,7 +6,7 @@
 ARG IMAGE_BASE_REGISTRY
 
 #### ---- Build ---- ####
-FROM ${IMAGE_BASE_REGISTRY}golang:1.22.5-alpine3.20 as build
+FROM ${IMAGE_BASE_REGISTRY}golang:1.22.5-alpine3.20 AS build
 
 LABEL maintainer=arash.idelchi
 
@@ -22,13 +22,17 @@ RUN apk add --no-cache \
     tzdata
 
 WORKDIR /work
+ARG GOCACHE=/.cache/go-build
+ARG GOMODCACHE=/.cache/go-mod
 
 COPY go.mod go.sum ./
-RUN go mod download
+RUN --mount=type=cache,target=${GOMODCACHE} \
+    go mod download
 
 COPY . .
 ARG GO_NEXT_TAG_VERSION="unofficial & built by unknown"
-RUN go install -ldflags="-s -w -X 'main.version=${GO_NEXT_TAG_VERSION}'" ./...
+RUN --mount=type=cache,target=${GOCACHE} \
+    go install -ldflags="-s -w -X 'main.version=${GO_NEXT_TAG_VERSION}'" ./...
 
 # Create User (Alpine)
 ARG USER=user
@@ -39,9 +43,11 @@ RUN addgroup -S -g 1001 ${USER} && \
 ENV TZ=Europe/Zurich
 
 #### ---- Standalone ---- ####
-FROM scratch as standalone
+FROM scratch AS standalone
 
 LABEL maintainer=arash.idelchi
+
+ARG USER=user
 
 # Copy artifacts from the build stage
 COPY --from=build /etc/passwd /etc/passwd
@@ -63,11 +69,14 @@ FROM ${IMAGE_BASE_REGISTRY}alpine:3.20
 
 LABEL maintainer=arash.idelchi
 
+ARG USER=user
+
 USER root
 
-# timezone
+# timezone & jq
 RUN apk add --no-cache \
-    tzdata
+    tzdata \
+    jq
 
 # Copy artifacts from the build stage
 COPY --from=build /etc/passwd /etc/passwd
