@@ -36,10 +36,10 @@ Run `go-next-tag` with the desired flags. The available flags include:
 
     --version: Show the version information of go-next-tag.
     --token: Access token to authenticate to the git server. Defaults to GO_NEXT_TAG_TOKEN environment variable.
+    --dry: Dry run mode. Do not perform any git operations. Default is false.
     --user-name: Username for git operations. Defaults to GO_NEXT_TAG_USER_NAME environment variable.
     --user-email: Email for git operations. Defaults to GO_NEXT_TAG_USER_EMAIL environment variable.
     --bump: Bump the next tag. Possible values: patch, minor, major, none. Default is 'patch'.
-    --push: Push the tag to the remote repository. Default is false.
     --format: The format of the tag. Possible values: majorminor, semver. Default is 'majorminor'.
     --prefix: The prefix to use for the tag. Default is 'v'.
 
@@ -52,7 +52,7 @@ Example:
         --action.bump minor \
         --action.format semver \
         --action.prefix v \
-        --push
+        --dry
 
 For more details on usage and configuration, run:
 
