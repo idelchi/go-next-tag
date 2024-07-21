@@ -25,7 +25,6 @@ func flags() {
 
 	// Action flags
 	pflag.String("action.bump", "patch", "Bump the next tag. Possible values: patch, minor, major, none")
-	pflag.Bool("action.push", false, "Push the tag to the remote repository")
 	pflag.String("action.format", "majorminor", "The format of the tag. Possible values: majorminor, semver")
 	pflag.String("action.prefix", "v", "The prefix to use for the tag")
 	pflag.String("action.checkout", "", "Checkout the branch name and the commit hash, separated by a space")
@@ -33,6 +32,7 @@ func flags() {
 	// Global flags
 	pflag.BoolP("verbose", "v", false, "Verbose mode")
 	pflag.StringP("output", "o", "text", "Output mode (json or text)")
+	pflag.Bool("dry", false, "Dry run mode")
 
 	pflag.CommandLine.SortFlags = false
 }

@@ -15,11 +15,11 @@ type Config struct {
 	}
 	Token string `validate:"required" mask:"fixed"` // Access token to authenticate to the git server
 
+	Dry bool // Dry run mode
+
 	Action struct {
 		// The type of bump to perform
 		Bump string `validate:"required,oneof=patch minor major none"`
-		// Whether to push the tag to the remote repository
-		Push bool
 		// The format of the tag
 		Format string `validate:"required,oneof=majorminor semver"`
 		// The prefix to use for the tag

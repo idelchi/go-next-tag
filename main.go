@@ -4,7 +4,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"log/slog"
 	"os"
 	"strings"
@@ -30,12 +29,16 @@ func main() { //nolint: funlen,cyclop
 	// Initialize a new GitManager with the provided flags.
 	gitManager, err := NewGitManager(cfg.Token)
 	if err != nil {
-		log.Fatalf("error initializing GitManager: %s", err)
+		slog.Error("Initializing GitManager", "error", err)
+
+		os.Exit(1)
 	}
 
 	// Configure git with the provided settings.
 	if err := gitManager.ConfigureGit(cfg.User.Name, cfg.User.Email); err != nil {
-		log.Fatalf("error configuring Git: %s", err)
+		slog.Error("Configuring Git", "error", err)
+
+		os.Exit(1)
 	}
 
 	if cfg.Action.Checkout != "" {
@@ -44,14 +47,18 @@ func main() { //nolint: funlen,cyclop
 		commit := strings.Split(cfg.Action.Checkout, " ")[1]
 
 		if err := gitManager.Checkout(branch, commit); err != nil {
-			log.Fatalf("error checking out branch %q: %s", branch, err)
+			slog.Error("Checking out branch", "error", err)
+
+			os.Exit(1)
 		}
 	}
 
 	// Calculate the next tag based on the current repository state and the bump strategy.
 	tag, err := gitManager.CalculateNextTag(cfg.Action.Bump)
 	if err != nil {
-		log.Fatalf("error calculating next tag: %s", err)
+		slog.Error("Calculating next tag", "error", err)
+
+		os.Exit(1)
 	}
 
 	var tagString string
@@ -65,20 +72,26 @@ func main() { //nolint: funlen,cyclop
 
 	slog.Info("Next tag", "tag", tagString)
 
-	// Create the calculated tag.
-	if err := gitManager.CreateTag(tagString); err != nil {
-		log.Fatalf("error creating tag: %s", err)
-	}
-
-	// If the push flag is not set, exit.
-	if !cfg.Action.Push {
+	// If the dry flag is set, exit without pushing the tag.
+	if cfg.Dry {
 		os.Exit(0)
 	}
 
-	// Push the tag to the remote repository.
-	if err := gitManager.PushTag(tagString); err != nil {
-		log.Fatalf("error pushing tag: %s", err)
+	// Create the calculated tag.
+	if err := gitManager.CreateTag(tagString); err != nil {
+		slog.Error("Creating tag", "error", err)
+
+		os.Exit(1)
 	}
 
-	log.Printf("Tag %q pushed successfully.\n", tagString)
+	slog.Info("Tag created", "tag", tagString)
+
+	// Push the tag to the remote repository.
+	if err := gitManager.PushTag(tagString); err != nil {
+		slog.Error("Pushing tag", "error", err)
+
+		os.Exit(1)
+	}
+
+	slog.Info("Tag pushed successfully", "tag", tagString)
 }
