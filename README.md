@@ -1,15 +1,6 @@
 # go-next-tag Overview
 
-`go-next-tag` is a Go tool for automatically calculating and applying the next `major-minor` or `semantic`
-version tag to your git repository.
-
-## Features
-
-- Automatically calculates the next version tag based on the current state of the repository.
-- Supports semantic versioning and allows for major, minor, and patch version bumps.
-- Customizable tag format and prefix settings.
-- Option to push the newly created tag to the remote repository.
-- Integrates with existing git configuration for user authentication.
+`go-next-tag` is a Go tool for calculating the next `major-minor` or `semantic` version given a tag.
 
 ## Getting Started
 
@@ -20,39 +11,22 @@ version tag to your git repository.
 
 ### Installation
 
-Clone the repository and build the binary with:
-
-    git clone https://github.com/idelchi/go-next-tag.git
-    cd go-next-tag
-    go build -o go-next-tag .
-
-Alternatively, you can install it directly using:
-
-    go install github.com/idelchi/go-next-tag.git@latest
+    go install github.com/idelchi/cmd/go-next-tag.git@latest
 
 ### Usage
 
 Run `go-next-tag` with the desired flags. The available flags include:
 
     --version: Show the version information of go-next-tag.
-    --token: Access token to authenticate to the git server. Defaults to GO_NEXT_TAG_TOKEN environment variable.
-    --dry: Dry run mode. Do not perform any git operations. Default is false.
-    --user-name: Username for git operations. Defaults to GO_NEXT_TAG_USER_NAME environment variable.
-    --user-email: Email for git operations. Defaults to GO_NEXT_TAG_USER_EMAIL environment variable.
     --bump: Bump the next tag. Possible values: patch, minor, major, none. Default is 'patch'.
     --format: The format of the tag. Possible values: majorminor, semver. Default is 'majorminor'.
     --prefix: The prefix to use for the tag. Default is 'v'.
 
 Example:
 
-    go-next-tag \
-        --token <your_access_token> \
-        --user.name <your_username> \
-        --user.email <your_email> \
-        --action.bump minor \
-        --action.format semver \
-        --action.prefix v \
-        --dry
+    go-next-tag --bump minor --format semver --prefix v v1.2.3
+
+    echo "v1.2.3" | go-next-tag --bump minor --format semver --prefix v
 
 For more details on usage and configuration, run:
 
@@ -60,6 +34,5 @@ For more details on usage and configuration, run:
 
 This will display a comprehensive list of flags and their descriptions.
 
-## TODOs
+All flags can be set through environment variables. The prefix "NEXT_TAG_" is used to avoid conflicts. For example, to set the bump strategy, use `NEXT_TAG_BUMP`.
 
-- Cache `go` steps in the GitHub Actions workflow.

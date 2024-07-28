@@ -73,10 +73,11 @@ ARG USER=user
 
 USER root
 
-# timezone & jq
+# Git and timezone
 RUN apk add --no-cache \
-    tzdata \
-    jq
+    git \
+    tzdata
+
 
 # Copy artifacts from the build stage
 COPY --from=build /etc/passwd /etc/passwd
