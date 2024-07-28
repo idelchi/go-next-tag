@@ -93,3 +93,8 @@ tasks:
 
   update:
     - task: git:update
+
+  release:
+    - docker build -t idelchi/go-next-tag:dev .
+    - docker push idelchi/go-next-tag:dev
+    - docker rmi idelchi/go-next-tag:dev

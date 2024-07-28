@@ -53,8 +53,15 @@ func main() { //nolint: funlen,cyclop
 		}
 	}
 
+	latest, err := gitManager.GetLatestTag()
+	if err != nil {
+		slog.Error("Getting latest tag", "error", err)
+
+		os.Exit(1)
+	}
+
 	// Calculate the next tag based on the current repository state and the bump strategy.
-	tag, err := gitManager.CalculateNextTag(cfg.Action.Bump)
+	tag, err := gitManager.CalculateNextTag(latest, cfg.Action.Bump)
 	if err != nil {
 		slog.Error("Calculating next tag", "error", err)
 

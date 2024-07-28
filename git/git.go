@@ -1,4 +1,4 @@
-package main
+package gitmanager
 
 import (
 	"errors"
@@ -10,34 +10,36 @@ import (
 	"github.com/go-git/go-git/v5/config"
 	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/go-git/go-git/v5/plumbing/object"
-	"github.com/go-git/go-git/v5/plumbing/transport/http"
+	"github.com/go-git/go-git/v5/plumbing/transport"
 )
+
+// TODO(Idelchi): Rename, GitManager to not stutter, find out exactly where gm.auth has to be passed.
+// Write a test for NextTag. CalculateNextTag can be just a function.
 
 // GitManager encapsulates the operations related to managing Git repositories,
 // including tagging and configuration.
 type GitManager struct {
-	repo *git.Repository // repo represents the Git repository managed by this GitManager.
-
-	auth *http.BasicAuth
+	repo *git.Repository
+	auth transport.AuthMethod
 }
 
 // NewGitManager initializes a new GitManager by opening the current Git repository.
 // It returns a pointer to the GitManager and any error encountered.
-func NewGitManager(token string) (gm *GitManager, err error) {
-	gm = &GitManager{}
-
-	// Attempt to open the current directory as a Git repository.
-	gm.repo, err = git.PlainOpen(".")
+func NewGitManager(auth AuthMethod) (*GitManager, error) {
+	repo, err := git.PlainOpen(".")
 	if err != nil {
 		return nil, fmt.Errorf("opening repository at '.': %w", err)
 	}
 
-	gm.auth = &http.BasicAuth{
-		Username: "user",
-		Password: token,
+	creds, err := auth.Authenticate()
+	if err != nil {
+		return nil, fmt.Errorf("authenticating: %w", err)
 	}
 
-	return gm, nil
+	return &GitManager{
+		repo: repo,
+		auth: creds,
+	}, nil
 }
 
 // ConfigureGit sets the username and email for Git operations within the repository.
