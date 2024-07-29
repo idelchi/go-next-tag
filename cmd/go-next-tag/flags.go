@@ -16,7 +16,6 @@ func flags() {
 	// General flags
 	pflag.Bool("version", false, "Show the version information and exit")
 	pflag.BoolP("help", "h", false, "Show the help information and exit")
-	pflag.String("config", "", "Load configuration from `FILE`")
 	pflag.BoolP("show", "s", false, "Show the configuration and exit")
 
 	// Format flags
@@ -40,7 +39,6 @@ func flags() {
 // parseFlags parses the application configuration (in order of precedence) from:
 //   - command-line flags
 //   - environment variables
-//   - configuration file
 func parseFlags() (cfg Config, err error) {
 	flags()
 
@@ -62,18 +60,29 @@ func parseFlags() (cfg Config, err error) {
 		return cfg, fmt.Errorf("unmarshalling config: %w", err)
 	}
 
+	// Handle the commandline flags that exit the application
 	handleExitFlags(cfg)
 
+	// Validate the input
+	if err := validateInput(&cfg); err != nil {
+		return cfg, fmt.Errorf("validating input: %w", err)
+	}
+
+	return cfg, nil
+}
+
+func validateInput(cfg *Config) error {
 	switch {
 	case pflag.NArg() != 0 && stdin.IsPiped():
-		return cfg, fmt.Errorf("input must be provided either via stdin or as a positional argument, not both")
+		return fmt.Errorf("input must be provided either via stdin or as a positional argument, not both")
 	case pflag.NArg() != 0:
 		cfg.Tag = pflag.Arg(0)
 	case stdin.IsPiped():
 		input, err := stdin.Read()
 		if err != nil {
-			return cfg, fmt.Errorf("reading input: %w", err)
+			return fmt.Errorf("reading input: %w", err)
 		}
+
 		cfg.Tag = input
 	}
 
@@ -81,7 +90,7 @@ func parseFlags() (cfg Config, err error) {
 		cfg.Bump = "minor"
 	}
 
-	return cfg, nil
+	return nil
 }
 
 //nolint:forbidigo // Function will print & exit for various help messages.

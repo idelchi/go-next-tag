@@ -13,7 +13,7 @@ func IsPiped() bool {
 	return (fi.Mode()&os.ModeCharDevice) == 0 && err == nil
 }
 
-// Read returns stdin as a string.
+// Read returns stdin as a string, trimming the trailing newline.
 func Read() (string, error) {
 	bytes, err := io.ReadAll(os.Stdin)
 

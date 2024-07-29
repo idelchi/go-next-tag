@@ -8,9 +8,9 @@ import (
 
 // Next generates the next version based on the current version and the specified bump rule.
 // Supports semantic versioning and a simplified <major.minor> format.
-func Next(version string, bump string) (semver.Version, error) {
+func Next(version, bump string) (semver.Version, error) {
 	if version == "" {
-		defaultVersion, err := semver.NewVersion("0.0.0")
+		defaultVersion, err := ToSemVer("0.0.0")
 		if err != nil {
 			return semver.Version{}, fmt.Errorf("constructing default version: %w", err)
 		}
@@ -45,4 +45,8 @@ func ToFormat(version semver.Version, format string) string {
 	default:
 		return version.String()
 	}
+}
+
+func ToSemVer(versions string) (*semver.Version, error) {
+	return semver.NewVersion(versions)
 }
