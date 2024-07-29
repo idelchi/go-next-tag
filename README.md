@@ -34,4 +34,5 @@ For more details on usage and configuration, run:
 
 This will display a comprehensive list of flags and their descriptions.
 
-All flags can be set through environment variables. The prefix "NEXT*TAG*" is used to avoid conflicts. For example, to set the bump strategy, use `NEXT_TAG_BUMP`.
+All flags can be set through environment variables. The prefix "NEXT*TAG*" is used to avoid conflicts.
+For example, to set the bump strategy, use `NEXT_TAG_BUMP`.

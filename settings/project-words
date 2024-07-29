@@ -5,10 +5,11 @@
 
 # cspell --config=.devenv/settings/cspell.yaml --words-only --unique "**/*.go" "**/*.py" "**/*.sh" | sort --ignore-case >> settings/project-words.txt
 
-cyclop
 forbidigo
+goerr
+idelchi
 nolint
 oneof
 pflag
-refs
+stretchr
 unmarshalling

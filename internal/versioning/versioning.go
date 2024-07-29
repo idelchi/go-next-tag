@@ -1,3 +1,4 @@
+// Package versioning provides utilities for calculating the next, converting and manipulating package versions.
 package versioning
 
 import (
@@ -38,6 +39,8 @@ func Next(version, bump string) (semver.Version, error) {
 	}
 }
 
+// ToFormat converts the version to the specified format.
+// Currently only supporting either default or <major.minor> format.
 func ToFormat(version semver.Version, format string) string {
 	switch format {
 	case "majorminor":
@@ -47,6 +50,12 @@ func ToFormat(version semver.Version, format string) string {
 	}
 }
 
-func ToSemVer(versions string) (*semver.Version, error) {
-	return semver.NewVersion(versions)
+// ToSemVer converts the version string to a semantic version.
+func ToSemVer(version string) (*semver.Version, error) {
+	semVer, err := semver.NewVersion(version)
+	if err != nil {
+		return nil, fmt.Errorf("parsing version: %w", err)
+	}
+
+	return semVer, nil
 }

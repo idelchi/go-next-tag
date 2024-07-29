@@ -2,13 +2,15 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
 	"strings"
 
-	"github.com/idelchi/go-next-tag/internal/stdin"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
+
+	"github.com/idelchi/go-next-tag/internal/stdin"
 )
 
 // flags defines the command-line flags for the application.
@@ -19,7 +21,12 @@ func flags() {
 	pflag.BoolP("show", "s", false, "Show the configuration and exit")
 
 	// Format flags
-	pflag.String("bump", "patch", "Bump the next tag. Possible values: patch, minor, major, none. If the format is majorminor, selecting patch will be analogous to minor")
+	pflag.String(
+		"bump",
+		"patch",
+		"Bump the next tag. Possible values: patch, minor, major, none. "+
+			"If the format is majorminor, selecting patch will be analogous to minor",
+	)
 	pflag.String("format", "majorminor", "The format of the tag. Possible values: majorminor, semver")
 	pflag.String("prefix", "v", "The prefix to use for the tag")
 
@@ -28,7 +35,11 @@ func flags() {
 	pflag.Usage = func() {
 		fmt.Fprintf(os.Stderr, "Usage: echo [version] | %s [flags] [version]\n\n", "go-next-tag")
 		fmt.Fprintf(os.Stderr, "Generate the next tag based on the current tag and the specified bump rule.\n\n")
-		fmt.Fprintf(os.Stderr, "If no version is provided as input, the tag will be generated as <prefix>0.0.0 or <prefix>0.0, depending on the format.\n\n")
+		fmt.Fprintf(
+			os.Stderr,
+			"If no version is provided as input, the tag will be generated as <prefix>0.0.0 or <prefix>0.0, "+
+				"depending on the format.\n\n",
+		)
 		fmt.Fprintf(os.Stderr, "The version can be provided as a positional argument or via stdin.\n\n")
 		fmt.Fprintf(os.Stderr, "The next tag will be printed to stdout.\n\n")
 		fmt.Fprintf(os.Stderr, "Flags:\n")
@@ -72,12 +83,13 @@ func parseFlags() (cfg Config, err error) {
 }
 
 func validateInput(cfg *Config) error {
-	switch {
-	case pflag.NArg() != 0 && stdin.IsPiped():
-		return fmt.Errorf("input must be provided either via stdin or as a positional argument, not both")
-	case pflag.NArg() != 0:
+	switch hasArgs, isPiped := pflag.NArg() != 0, stdin.IsPiped(); {
+	case hasArgs && isPiped:
+		//nolint:goerr113 // One dynamic error if fine.
+		return errors.New("input must be provided either via stdin or as a positional argument, not both")
+	case hasArgs:
 		cfg.Tag = pflag.Arg(0)
-	case stdin.IsPiped():
+	case isPiped:
 		input, err := stdin.Read()
 		if err != nil {
 			return fmt.Errorf("reading input: %w", err)

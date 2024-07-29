@@ -1,3 +1,4 @@
+// Package stdin provides simple utilities for reading from stdin.
 package stdin
 
 import (
@@ -6,7 +7,7 @@ import (
 	"strings"
 )
 
-// IsPiped checks if stdin is piped.
+// IsPiped checks if something has been piped to stdin.
 func IsPiped() bool {
 	fi, err := os.Stdin.Stat()
 
