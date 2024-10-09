@@ -10,7 +10,7 @@ import (
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 
-	"github.com/idelchi/go-next-tag/internal/stdin"
+	"github.com/idelchi/go-next-tag/pkg/stdin"
 )
 
 // flags defines the command-line flags for the application.

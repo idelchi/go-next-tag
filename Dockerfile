@@ -5,8 +5,11 @@
 # Docker image repository to use. Use `docker.io` for public images.
 ARG IMAGE_BASE_REGISTRY
 
+ARG ALPINE_VERSION=3.20
+ARG GO_VERSION=1.23.0
+
 #### ---- Build ---- ####
-FROM ${IMAGE_BASE_REGISTRY}golang:1.22.5-alpine3.20 AS build
+FROM ${IMAGE_BASE_REGISTRY}golang:${GO_VERSION}-alpine${ALPINE_VERSION} AS build
 
 LABEL maintainer=arash.idelchi
 
@@ -22,17 +25,20 @@ RUN apk add --no-cache \
     tzdata
 
 WORKDIR /work
-ARG GOCACHE=/.cache/go-build
-ARG GOMODCACHE=/.cache/go-mod
+
+ARG GOMODCACHE=/home/${USER}/.cache/.go-mod
+ARG GOCACHE=/home/${USER}/.cache/.go
 
 COPY go.mod go.sum ./
-RUN --mount=type=cache,target=${GOMODCACHE} \
+RUN --mount=type=cache,target=${GOMODCACHE},uid=1001,gid=1001 \
+    --mount=type=cache,target=${GOCACHE},uid=1001,gid=1001 \
     go mod download
 
 COPY . .
 ARG GO_NEXT_TAG_VERSION="unofficial & built by unknown"
-RUN --mount=type=cache,target=${GOCACHE} \
-    go install -ldflags="-s -w -X 'main.version=${GO_NEXT_TAG_VERSION}'" ./...
+RUN --mount=type=cache,target=${GOMODCACHE},uid=1001,gid=1001 \
+    --mount=type=cache,target=${GOCACHE},uid=1001,gid=1001 \
+    CGO_ENABLED=0 go install -ldflags="-s -w -X 'main.version=${GO_NEXT_TAG_VERSION}'" ./...
 
 # Create User (Alpine)
 ARG USER=user

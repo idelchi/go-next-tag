@@ -6,12 +6,12 @@
 
 ### Prerequisites
 
-- Go 1.22 or higher
+- Go 1.23 or higher
 - Git
 
 ### Installation
 
-    go install github.com/idelchi/cmd/go-next-tag.git@latest
+    go install github.com/idelchi/go-next-tag/cmd/go-next-tag@latest
 
 ### Usage
 

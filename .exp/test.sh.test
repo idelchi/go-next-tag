@@ -1,0 +1,101 @@
+#!/bin/bash
+
+dir=$(pwd)
+
+# Create a temporary directory and move into it
+temp_dir=$(mktemp -d)
+cd "${temp_dir}" || exit
+echo "In directory: ${temp_dir}"
+git clone https://github.com/idelchi/playground.git .
+
+git config --local user.email "test@test.com"
+git config --local user.name "Test User"
+
+git push origin --delete $(git tag -l)
+git tag -l | xargs git tag -d
+git fetch -t
+
+# Function to create a commit
+create_tag() {
+  git tag "$1"
+  git push origin "$1"
+}
+
+# Create tags with different versioning schemes
+create_tag v1.1.1
+create_tag v2.1
+create_tag v3.0.0
+create_tag v1.0.0
+create_tag v3.0.0-alpha
+create_tag v1.1.0
+create_tag v2.0.0
+create_tag v4.6.1
+create_tag v2.0.0-beta
+create_tag v2.0.1
+create_tag v2.1.3
+create_tag v3.0.0-beta
+
+# # Print tags sorted by version
+# echo "Tags sorted by version:"
+# tags=$(git -c "versionsort.suffix=-" tag -l --sort=-v:refname)
+# for tag in $tags; do
+#     echo "$tag"
+# done
+
+# latest_tag=$(git -c "versionsort.suffix=-" tag -l --sort=-v:refname | head -n 1)
+
+# # Print latest tag
+# echo "Latest tag: $latest_tag"
+
+echo "done creating tags on the remote"
+
+cd .. && rm -rf "${temp_dir}"
+
+temp_dir=$(mktemp -d)
+cd "${temp_dir}" || exit
+echo "In directory: ${temp_dir}"
+git clone https://github.com/idelchi/playground.git .
+
+git config --local user.email "test@test.com"
+git config --local user.name "Test User"
+
+latest_tag=$(git -c 'versionsort.suffix=-' \
+  ls-remote --exit-code --refs --sort='version:refname' --tags \
+  2>/dev/null |
+  tail --lines=1 |
+  cut --delimiter='/' --fields=3)
+
+cd .. && rm -rf "${temp_dir}"
+
+cd "${dir}" || exit
+
+go build -o . ./...
+
+echo "Latest tag: ${latest_tag}"
+
+echo "majorminor: major"
+echo "${latest_tag}" | ./go-next-tag.exe --bump=major
+echo "majorminor: minor"
+echo "${latest_tag}" | ./go-next-tag.exe --bump=minor
+echo "majorminor: patch"
+echo "${latest_tag}" | ./go-next-tag.exe --bump=patch
+
+echo "semver: major"
+echo "${latest_tag}" | ./go-next-tag.exe --bump=major --format=semver
+echo "semver: minor"
+echo "${latest_tag}" | ./go-next-tag.exe --bump=minor --format=semver
+echo "semver: patch"
+echo "${latest_tag}" | ./go-next-tag.exe --bump=patch --format=semver
+
+temp_dir=$(mktemp -d)
+cd "${temp_dir}" || exit
+echo "In directory: ${temp_dir}"
+git clone https://github.com/idelchi/playground.git .
+
+git config --local user.email "test@test.com"
+git config --local user.name "Test User"
+
+git push origin --delete $(git tag -l)
+git tag -l | xargs git tag -d
+
+cd .. && rm -rf "${temp_dir}"

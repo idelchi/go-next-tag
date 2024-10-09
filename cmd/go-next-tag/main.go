@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"os"
 
-	versioning "github.com/idelchi/go-next-tag/internal/versioning"
+	"github.com/idelchi/go-next-tag/pkg/versioning"
 )
 
 // Global variable for CI stamping.

@@ -5,7 +5,7 @@ import (
 
 	"github.com/go-playground/validator/v10"
 
-	versioning "github.com/idelchi/go-next-tag/internal/versioning"
+	versioning "github.com/idelchi/go-next-tag/pkg/versioning"
 )
 
 // Config represents the configuration for the go-next-tag application.
