@@ -2,18 +2,21 @@
 
 `go-next-tag` is a Go tool for calculating the next `major-minor` or `semantic` version given a tag.
 
-## Getting Started
+## Installation
 
-### Prerequisites
+### From source
 
-- Go 1.23 or higher
-- Git
+```sh
+go install github.com/idelchi/go-next-tag/cmd/go-next-tag@latest
+```
 
-### Installation
+### From installation script
 
-    go install github.com/idelchi/go-next-tag/cmd/go-next-tag@latest
+```sh
+curl -sSL https://raw.githubusercontent.com/idelchi/go-next-tag/refs/heads/dev/install.sh | sh -s -- -v v0.1 -d ~/.local/bin
+```
 
-### Usage
+## Usage
 
 Run `go-next-tag` with the desired flags. The available flags include:
 

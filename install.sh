@@ -185,7 +185,6 @@ parse_args() {
             o) OS="${OPTARG}" ;;
             x) DEBUG=1 ;;
             n) DRY_RUN=1 ;;
-            k) DISABLE_SSL=1 ;;
             h) usage ;;
             :) warning "Option -${OPTARG} requires an argument"; usage ;;
             *) warning "Invalid option: -${OPTARG}"; usage ;;
@@ -221,12 +220,6 @@ install() {
 
     # Download and extract/install
     success "Downloading '${BINARY_NAME}' from '${URL}'"
-
-    if [ "${DISABLE_SSL}" -eq 1 ]; then
-        SSL_FLAG="-k"
-    else
-        SSL_FLAG=""
-    fi
 
     code=$(curl -s -w '%{http_code}' -L -o "${tmp}" "${URL}")
 
