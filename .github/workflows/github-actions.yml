@@ -1,35 +1,141 @@
 name: go-next-tag
-on: [push, pull_request, workflow_dispatch]
 
-env:
-  BRANCH: ${{ github.head_ref || github.ref_name }}
-  IMAGE: ${{ github.repository }}
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches:
+      - dev
+      - master
+    tags:
+      - "*"
 
 jobs:
-  verify:
-    uses: idelchi/devenv/.github/workflows/devenv-actions.yml@dev
-    with:
-      image: idelchi/devenv:dev
+  # verify:
+  #   uses: idelchi/devenv/.github/workflows/devenv-actions.yml@dev
+  #   with:
+  #     image: idelchi/devenv:dev
+
+  last-tag:
+    permissions:
+      contents: write
+      actions: write
+    runs-on: ubuntu-24.04
+    if: github.ref == 'refs/heads/dev'
+    outputs:
+      tag: ${{ steps.tag.outputs.LAST_TAG }}
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: tag
+        id: tag
+        run: |
+          LAST_TAG=$(gh release list -L 1 --exclude-pre-releases --json tagName -q '.[0].tagName')
+          echo "LAST_TAG=${LAST_TAG}" >> ${GITHUB_ENV}
+          echo "LAST_TAG=${LAST_TAG}" >> ${GITHUB_OUTPUT}
+
+      - name: check-env
+        run: |
+          echo "The last tag is '${LAST_TAG}'"
+
+  tag-prerelease:
+    needs: last-tag
+    permissions:
+      contents: write
+      actions: write
+    runs-on: ubuntu-24.04
+    if: github.ref == 'refs/heads/dev'
+    env:
+      TAG: ${{ needs.last-tag.outputs.tag }}-beta
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: delete ${{ env.TAG }} tag & release
+        run: |
+          gh release list --json tagName,isPrerelease -q '.[] | select(.isPrerelease == true) | .tagName' | xargs -I {} gh release delete {}
+          gh release delete ${{ env.TAG }} --yes --cleanup-tag
+        continue-on-error: true
+
+      - name: delete ${{ env.TAG }} tag
+        run: |
+          git tag --delete ${{ env.TAG }}
+          git push origin --delete ${{ env.TAG }}
+        continue-on-error: true
+
+      - name: create ${{ env.TAG }} tag
+        run: |
+          git tag ${{ env.TAG }}
+          git push origin ${{ env.TAG }}
+
+      - name: run workflow for ${{ env.TAG }} tag
+        run: |
+          gh workflow run ${{ github.workflow }} --ref ${{ env.TAG }}
+
+  cleanup:
+    needs: tag-prerelease
+    permissions:
+      contents: write
+      actions: write
+    runs-on: ubuntu-24.04
+    if: github.ref == 'refs/heads/dev'
+    continue-on-error: true
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: cleanup old builds
+        run: >
+          gh run list --limit 500
+          --workflow github-actions.yml
+          --status completed
+          --branch dev
+          --json databaseId
+          -q ".[].databaseId"
+          | xargs -n 1 gh run delete
+
+      - name: cleanup old builds
+        run: >
+          gh run list --limit 500 \
+            --workflow github-actions.yml \
+            --status completed \
+            --json databaseId,headBranch \
+            -q '.[] | select(.headBranch | endswith("-beta")) | .databaseId' \
+            | xargs -n 1 gh run delete
 
   release:
-    runs-on: ubuntu-22.04
-    needs: [verify]
-    if: github.ref == 'refs/heads/master'
+    permissions:
+      contents: write
+    runs-on: ubuntu-24.04
+    if: startsWith(github.ref, 'refs/tags/')
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
     steps:
-      - uses: actions/checkout@v3
-
-      - uses: docker/setup-buildx-action@v2
-      - uses: docker/login-action@v2
+      - name: Checkout
+        uses: actions/checkout@v4
         with:
-          username: ${{ github.repository_owner }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          fetch-depth: 0
 
-      - uses: docker/build-push-action@v4
+      - name: Set up Go
+        uses: actions/setup-go@v5
+
+      - name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v6
         with:
-          push: true
-          tags: ${{ env.IMAGE }}:latest
-          cache-from: type=registry,ref=${{ env.IMAGE }}:dev
-# TODO(Idelchi): Handle release workflows.
-# https://github.com/skills/release-based-workflow
-# https://birtony.medium.com/setting-up-automated-release-workflow-with-github-actions-628dbca2446e
-# https://rangle.io/blog/release-process-github-actions
+          distribution: goreleaser
+          version: "~> v2"
+          args: release --clean
