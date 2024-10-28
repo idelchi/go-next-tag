@@ -8,7 +8,7 @@ Usage:
 
 For full usage information, run `go-next-tag -h`.
 
-`go-next-tag supports` configuration through environment variables starting with the prefix `NEXT_TAG_`.
-For example, to set the bump strategy, use `NEXT_TAG_BUMP`.
+`go-next-tag supports` configuration through environment variables starting with the prefix `GO_NEXT_TAG_`.
+For example, to set the bump strategy, use `GO_NEXT_TAG_BUMP`.
 */
 package main

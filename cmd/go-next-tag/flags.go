@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"os"
 	"strings"
@@ -62,7 +61,7 @@ func parseFlags() (cfg Config, err error) {
 	}
 
 	// Set viper to automatically read from environment variables
-	viper.SetEnvPrefix("next_tag")
+	viper.SetEnvPrefix("go_next_tag")
 	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 	viper.AutomaticEnv()
 
@@ -84,9 +83,6 @@ func parseFlags() (cfg Config, err error) {
 
 func validateInput(cfg *Config) error {
 	switch hasArgs, isPiped := pflag.NArg() != 0, stdin.IsPiped(); {
-	case hasArgs && isPiped:
-		//nolint:goerr113 // One dynamic error if fine.
-		return errors.New("input must be provided either via stdin or as a positional argument, not both")
 	case hasArgs:
 		cfg.Tag = pflag.Arg(0)
 	case isPiped:
