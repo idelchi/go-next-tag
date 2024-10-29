@@ -81,6 +81,7 @@ func parseFlags() (cfg Config, err error) {
 	return cfg, nil
 }
 
+// validateInput validates the input configuration, selecting the tag from the command-line arguments or stdin.
 func validateInput(cfg *Config) error {
 	switch hasArgs, isPiped := pflag.NArg() != 0, stdin.IsPiped(); {
 	case hasArgs:
