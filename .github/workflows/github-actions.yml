@@ -41,15 +41,7 @@ jobs:
       - name: Test
         shell: sh
         run: |
-          [ "$(go run ./cmd/go-next-tag v1.1)" = "v1.2" ] || (echo "test `v1.1` (argument) failed" && exit 1)
-          [ "$(echo "v2.1" | go run ./cmd/go-next-tag)" = "v2.2" ] || (echo "test `v2.1` (piped) failed" && exit 1)
-          [ "$(echo "v2.1" | go run ./cmd/go-next-tag v3.1)" = "v3.2" ] || (echo "test `v2.1/v3.1` (piped & argument) failed" && exit 1)
-          [ "$(go run ./cmd/go-next-tag)" = "v0.0" ] || (echo "test `no-input` failed" && exit 1)
-
-          [ "$(go run ./cmd/go-next-tag --bump=major v1.1)" = "v2.0" ] || (echo "test (--bump=major) `v1.1` (argument) failed" && exit 1)
-          [ "$(echo "v2.1" | go run ./cmd/go-next-tag --bump=major)" = "v3.0" ] || (echo "test (--bump=major) `v2.1` (piped) failed" && exit 1)
-          [ "$(echo "v2.1" | go run ./cmd/go-next-tag --bump=major v3.1)" = "v4.0" ] || (echo "test (--bump=major) `v2.1/v3.1` (piped & argument) failed" && exit 1)
-          [ "$(go run ./cmd/go-next-tag --bump=major )" = "v0.0" ] || (echo "test (--bump=major) `no-input` failed" && exit 1)
+          ./tests/go-next-tag.sh
 
   last-tag:
     needs: test
