@@ -84,11 +84,7 @@ jobs:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
-      # - name: Checkout
-      #   uses: actions/checkout@v4
-      #   with:
-      #     fetch-depth: 0
-      #     fetch-tags: true
+      - uses: actions/checkout@v4
 
       - name: delete old pre-release
         run: |
@@ -126,6 +122,8 @@ jobs:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
+      - uses: actions/checkout@v4
+
       - name: cleanup old builds
         run: >
           gh run list --limit 500
