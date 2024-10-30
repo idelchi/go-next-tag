@@ -83,7 +83,7 @@ jobs:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
-      # - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: delete old pre-release
         run: |
@@ -123,15 +123,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # - name: cleanup old builds
-      #   run: >
-      #     gh run list --limit 500
-      #     --workflow github-actions.yml
-      #     --status completed
-      #     --branch dev
-      #     --json databaseId
-      #     -q ".[].databaseId"
-      #     | xargs -n 1 gh run delete
+      - name: cleanup old builds
+        run: >
+          gh run list --limit 500
+          --workflow github-actions.yml
+          --status completed
+          --branch dev
+          --json databaseId
+          -q ".[].databaseId"
+          | xargs -n 1 gh run delete
 
       - name: cleanup old builds
         run: >
