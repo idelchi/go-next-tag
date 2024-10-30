@@ -24,7 +24,7 @@ func flags() {
 	pflag.StringP(
 		"bump",
 		"b",
-		"patch",
+		"minor",
 		`Bump the next tag. Possible values: 'patch', 'minor', 'major', 'none'.
 If the format is 'majorminor', selecting patch will be analogous to 'minor'`,
 	)

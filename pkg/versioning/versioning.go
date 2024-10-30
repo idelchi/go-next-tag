@@ -79,21 +79,6 @@ func IsSemVerish(version string) bool {
 	return err == nil
 }
 
-// getFirstNonDigitsDeprecated returns all leading non-digit characters from the string.
-func getFirstNonDigitsDeprecated(str string) string {
-	for i, char := range str {
-		if unicode.IsDigit(char) {
-			return str[:i]
-		}
-	}
-
-	if len(str) > 0 {
-		return str
-	}
-
-	return ""
-}
-
 // getFirstNonDigits returns all leading non-digit characters until we hit the actual version part.
 func getFirstNonDigits(versionWithPrefix string) string {
 	for index := range len(versionWithPrefix) {
