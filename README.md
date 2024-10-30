@@ -1,84 +1,54 @@
-# 🚀 go-next-tag: THE MOST BLAZINGLY FAST™️ VERSION BUMPER IN THE MULTIVERSE! 🔥
+# go-next-tag Overview
 
-> FR FR NO CAP, this tool will CHANGE YOUR LIFE! Your version strings will never be the same! SHEEEESH! 🎯
+`go-next-tag` is a Go tool for calculating the next `major-minor` or `semantic` version given a tag.
 
-## 🏃‍♂️ Installation (SO FAST IT HURTS!)
+## Installation
 
-### From source (REAL ONES ONLY) 💪
+### From source
 
 ```sh
-go install github.com/idelchi/go-next-tag/cmd/go-next-tag@latest # SKRRRRAHH!
+go install github.com/idelchi/go-next-tag/cmd/go-next-tag@latest
 ```
 
-### For the LAZY KINGS 👑 (installation script)
+### From installation script
 
 ```sh
 curl -sSL https://raw.githubusercontent.com/idelchi/go-next-tag/refs/heads/dev/install.sh | sh -s -- -d ~/.local/bin
 ```
 
-## 🎮 Usage (SO SIMPLE YOUR CAT COULD DO IT!)
+## Usage
 
 ```sh
-go-next-tag [flags] [version] # THAT'S IT FR FR!
+go-next-tag [flags] [version]
 ```
 
-### FLAGS THAT GO BRRRRRRR! 🏁
+Run `go-next-tag` with the desired flags. The available flags include:
 
 ```sh
---version  # FLEXING THE VERSION INFO NO CAP
---bump     # PATCH? MINOR? MAJOR? NONE? YOU CHOOSE KING! (default: patch)
---format   # majorminor or semver WE GOT ALL THE DRIPS! (default: majorminor)
+--version: Show the version information of go-next-tag.
+--bump: Bump the next tag. Possible values: patch, minor, major, none. Default is 'patch'.
+--format: The format of the tag. Possible values: majorminor, semver. Default is 'majorminor'.
 ```
 
-### EXAMPLES THAT WILL BLOW YOUR MIND! 🤯
+Example:
 
 ```sh
-# WATCH THIS MAGIC FAM
 go-next-tag --bump minor --format semver v1.2.3
+```
 
-# OR PIPE IT LIKE A BOSS
+```sh
 echo "v1.2.3" | go-next-tag --bump minor --format semver
 ```
 
-> ⚠️ REAL TALK THO: If you provide version in both stdin AND arguments, we respect the argument like true G's! 💯
+If the version is provided as both stdin and an argument, the argument will take precedence.
 
-### NEED MORE HELP? WE GOT YOU FAM! 🤝
-
-```sh
-go-next-tag --help # DOCUMENTATION GO BRRRRRR!
-```
-
-### ENV VARS FOR THE REAL HACKERS 🐱‍💻
-
-ALL FLAGS CAN BE SET THROUGH ENV VARS! WE PREFIX WITH `GO_NEXT_TAG` CUZ WE BUILT DIFFERENT!
+For more details on usage and configuration, run:
 
 ```sh
-export GO_NEXT_TAG_BUMP="minor" # LOOK MA, NO FLAGS!
+go-next-tag --help
 ```
 
-## ⚡️ Performance
+This will display a comprehensive list of flags and their descriptions.
 
-- BLAZINGLY FAST™️
-- ZERO ALLOCATIONS\*
-- MEMORY EFFICIENT AF
-- SO FAST IT BREAKS THE SPACE-TIME CONTINUUM
-- YOUR COMPUTER MIGHT LEVITATE
-
-\* (trust me bro)
-
-## 🏆 Features
-
-- HANDLES ANY VERSION STRING YOU THROW AT IT
-- FORMATS ON FLEEK
-- ERROR MESSAGES THAT ACTUALLY MAKE SENSE (FR FR)
-- MORE RELIABLE THAN YOUR EX
-
-## 💅 Contributing
-
-PRs ARE WELCOME BUT ONLY IF THEY'RE BLAZINGLY FAST™️!
-
----
-
-Built with 🔥 and Go by @idelchi
-
-NO VERSIONS WERE HARMED IN THE MAKING OF THIS TOOL! SKRRRAHH! 🚀
+All flags can be set through environment variables. The prefix `GO_NEXT_TAG` is used to avoid conflicts.
+For example, to set the bump strategy, use `GO_NEXT_TAG_BUMP`.
