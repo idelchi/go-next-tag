@@ -1,5 +1,3 @@
-// go-next-tag is a simple command-line application for calculating the next `major-minor` or `semantic` version given a
-// tag.
 package main
 
 import (

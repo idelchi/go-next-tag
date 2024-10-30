@@ -79,16 +79,33 @@ func IsSemVerish(version string) bool {
 	return err == nil
 }
 
-// getFirstNonDigits returns all leading non-digit characters from the string.
-func getFirstNonDigits(s string) string {
-	for i, char := range s {
+// getFirstNonDigitsDeprecated returns all leading non-digit characters from the string.
+func getFirstNonDigitsDeprecated(str string) string {
+	for i, char := range str {
 		if unicode.IsDigit(char) {
-			return s[:i]
+			return str[:i]
 		}
 	}
 
-	if len(s) > 0 {
-		return s
+	if len(str) > 0 {
+		return str
+	}
+
+	return ""
+}
+
+// getFirstNonDigits returns all leading non-digit characters until we hit the actual version part.
+func getFirstNonDigits(versionWithPrefix string) string {
+	for index := range len(versionWithPrefix) {
+		candidate := versionWithPrefix[index:]
+		// First check if it starts with a digit
+		if len(candidate) > 0 && !unicode.IsDigit(rune(candidate[0])) {
+			continue
+		}
+		// Then check if it's valid semver
+		if _, err := semver.NewVersion(candidate); err == nil {
+			return versionWithPrefix[:index]
+		}
 	}
 
 	return ""
