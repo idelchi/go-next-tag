@@ -1,6 +1,6 @@
 #!/bin/bash
 # shellcheck disable=all
-#
+
 # BLAZINGLY FAST™️ TEST SUITE FR FR
 # By Professor of Bustology, PhD
 
@@ -11,7 +11,7 @@ go install ./cmd/go-next-tag
 echo "🔥 INITIATING BLAZINGLY FAST™️ TESTING SEQUENCE 🔥"
 
 # BASIC VERSION BUMPING TESTS (MAJOR-MINOR STYLE) NO CAP
-echo "🧪 Testing MAJOR-MINOR format (default behavior) SKRRRAHH!"
+echo "🧪 Testing MAJOR-MINOR format (default behaviour) SKRRRAHH!"
 
 [[ "$(go-next-tag v1.1)" == "v1.2" ]] || (echo '❌ test `v1.1` (argument) failed' && exit 1)
 [[ "$(echo "v2.1" | go-next-tag)" == "v2.2" ]] || (echo '❌ test `v2.1` (piped) failed' && exit 1)

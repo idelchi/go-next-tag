@@ -13,13 +13,13 @@ go install github.com/idelchi/go-next-tag/cmd/go-next-tag@latest # SKRRRRAHH!
 ### For the LAZY KINGS 👑 (installation script)
 
 ```sh
-curl -sSL https://raw.githubusercontent.com/idelchi/go-next-tag/refs/heads/dev/install.sh | sh -s -- -d ~/.local/bin # BLAZINGLY FAST!
+curl -sSL https://raw.githubusercontent.com/idelchi/go-next-tag/refs/heads/dev/install.sh | sh -s -- -d ~/.local/bin
 ```
 
 ## 🎮 Usage (SO SIMPLE YOUR CAT COULD DO IT!)
 
 ```sh
-go-next-tag [flags] [version] # THATS IT FR FR!
+go-next-tag [flags] [version] # THAT'S IT FR FR!
 ```
 
 ### FLAGS THAT GO BRRRRRRR! 🏁
