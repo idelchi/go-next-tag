@@ -1,6 +1,6 @@
 #!/bin/bash
 # shellcheck disable=all
-
+#
 # BLAZINGLY FAST™️ TEST SUITE FR FR
 # By Professor of Bustology, PhD
 
