@@ -1,112 +1,84 @@
-# 🚀 go-next-tag: A GROUNDBREAKING STUDY IN BLAZINGLY FAST™️ VERSION STRING MANIPULATION 🔥
+# 🚀 go-next-tag: THE MOST BLAZINGLY FAST™️ VERSION BUMPER IN THE MULTIVERSE! 🔥
 
-> A Dissertation presented to the Faculty of BUSTOLOGY at the UNIVERSITY OF BLAZINGLY FAST™️ COMPUTING
->
-> By Dr. SKRRRAHH, PhD in Advanced String Theory & Applied Bustology
->
-> NO CAP FR FR 💯
+> FR FR NO CAP, this tool will CHANGE YOUR LIFE! Your version strings will never be the same! SHEEEESH! 🎯
 
-## 📚 Abstract
+## 🏃‍♂️ Installation (SO FAST IT HURTS!)
 
-This revolutionary tool represents a paradigm shift in version string manipulation methodology, achieving unprecedented levels of BLAZINGLY FAST™️ performance through innovative prefix extraction algorithms and cutting-edge semver parsing techniques.
-
-## 🏃‍♂️ Installation Methods (PEER-REVIEWED FOR MAXIMUM VELOCITY)
-
-### Direct Binary Acquisition Protocol 💪
+### From source (REAL ONES ONLY) 💪
 
 ```sh
-go install github.com/idelchi/go-next-tag/cmd/go-next-tag@latest # METHODOLOGY: SKRRRAHH!
+go install github.com/idelchi/go-next-tag/cmd/go-next-tag@latest # SKRRRRAHH!
 ```
 
-### Automated Deployment Sequence 👑
+### For the LAZY KINGS 👑 (installation script)
 
 ```sh
-curl -sSL https://raw.githubusercontent.com/idelchi/go-next-tag/refs/heads/dev/install.sh | sh -s -- -d ~/.local/bin # EMPIRICALLY PROVEN FAST!
+curl -sSL https://raw.githubusercontent.com/idelchi/go-next-tag/refs/heads/dev/install.sh | sh -s -- -d ~/.local/bin # BLAZINGLY FAST!
 ```
 
-## 🧪 Experimental Methodology
-
-### Primary Command Interface
+## 🎮 Usage (SO SIMPLE YOUR CAT COULD DO IT!)
 
 ```sh
-go-next-tag [flags] [version] # STATISTICALLY SIGNIFICANT RESULTS FR FR!
+go-next-tag [flags] [version] # THATS IT FR FR!
 ```
 
-### Control Parameters 🏁
+### FLAGS THAT GO BRRRRRRR! 🏁
 
 ```sh
---version  # VERSION METADATA EXTRACTION PROTOCOL
---bump     # INCREMENT MAGNITUDE SELECTOR (patch|minor|major|none)
---format   # VERSIONING SCHEMA SPECIFICATION (majorminor|semver)
+--version  # FLEXING THE VERSION INFO NO CAP
+--bump     # PATCH? MINOR? MAJOR? NONE? YOU CHOOSE KING! (default: patch)
+--format   # majorminor or semver WE GOT ALL THE DRIPS! (default: majorminor)
 ```
 
-### Empirical Evidence 🤯
+### EXAMPLES THAT WILL BLOW YOUR MIND! 🤯
 
 ```sh
-# Case Study A: Direct Version Manipulation
+# WATCH THIS MAGIC FAM
 go-next-tag --bump minor --format semver v1.2.3
 
-# Case Study B: Stdin Pipeline Analysis
+# OR PIPE IT LIKE A BOSS
 echo "v1.2.3" | go-next-tag --bump minor --format semver
 ```
 
-> ⚠️ METHODOLOGICAL NOTE: Input source precedence follows strict academic guidelines (args > stdin) NO CAP! 💯
+> ⚠️ REAL TALK THO: If you provide version in both stdin AND arguments, we respect the argument like true G's! 💯
 
-## 🔬 Technical Specifications
+### NEED MORE HELP? WE GOT YOU FAM! 🤝
 
-### Runtime Analysis
-
-- BLAZINGLY FAST™️ O(n) complexity
-- Zero heap allocations\* (peer-reviewed)
-- Memory utilization optimized to BUSSIN levels
-- Quantum tunneling side effects possible
-- Cooling system recommended
-
-\* (significance level: p < trust_me_bro)
-
-### Advanced Features
-
-- Universal version string parsing algorithm
-- Format validation exceeding ISO standards
-- Error reporting with unprecedented clarity
-- More stable than most relationships
-
-## 🎓 Research Team
-
-### Core Contributors
-
-- Professor of BLAZINGLY FAST™️ Computing
-- Dean of Bustology
-- Head of String Theory Department
-- Chief Semver Scientist
-
-### System Requirements
-
-- Go 1.22+ (for them JUICY integer ranges)
-- A CPU that can handle this heat 🔥
-- Quantum cooling (recommended)
-- RGB lighting (optional but proven to increase speed)
-
-## 📈 Benchmarks
-
-```go
-for i := range len(versionWithPrefix) { // PEAK PERFORMANCE
-    // ... BLAZINGLY FAST™️ logic ...
-}
+```sh
+go-next-tag --help # DOCUMENTATION GO BRRRRRR!
 ```
 
-## 🔍 Future Research
+### ENV VARS FOR THE REAL HACKERS 🐱‍💻
 
-PRs WELCOME FROM FELLOW BUSTOLOGY RESEARCHERS! Requirements:
+ALL FLAGS CAN BE SET THROUGH ENV VARS! WE PREFIX WITH `GO_NEXT_TAG` CUZ WE BUILT DIFFERENT!
 
-- Must be BLAZINGLY FAST™️
-- Must pass peer review by the Committee of SHEEEESH
-- Must make gophers go SKRRRAHH!
+```sh
+export GO_NEXT_TAG_BUMP="minor" # LOOK MA, NO FLAGS!
+```
+
+## ⚡️ Performance
+
+- BLAZINGLY FAST™️
+- ZERO ALLOCATIONS\*
+- MEMORY EFFICIENT AF
+- SO FAST IT BREAKS THE SPACE-TIME CONTINUUM
+- YOUR COMPUTER MIGHT LEVITATE
+
+\* (trust me bro)
+
+## 🏆 Features
+
+- HANDLES ANY VERSION STRING YOU THROW AT IT
+- FORMATS ON FLEEK
+- ERROR MESSAGES THAT ACTUALLY MAKE SENSE (FR FR)
+- MORE RELIABLE THAN YOUR EX
+
+## 💅 Contributing
+
+PRs ARE WELCOME BUT ONLY IF THEY'RE BLAZINGLY FAST™️!
 
 ---
 
-_This research was supported by a grant from the International Institute of BLAZINGLY FAST™️ Computing_
+Built with 🔥 and Go by @idelchi
 
-Built with 🔥 and Go by @idelchi, PhD in Applied Bustology
-
-NO VERSIONS WERE HARMED IN THIS SCIENTIFIC PURSUIT! SKRRRRAHH! 🚀
+NO VERSIONS WERE HARMED IN THE MAKING OF THIS TOOL! SKRRRAHH! 🚀
