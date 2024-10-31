@@ -7,7 +7,7 @@ trap 'echo "❌❌ Tests failed! ❌❌"' ERR # Exit if any command fails
 
 go install ./cmd/go-next-tag
 
-echo "🧪 Testing MAJOR-MINOR format (default behaviour)"
+echo "🧪 Testing MAJOR-MINOR format"
 
 [[ "$(go-next-tag v1.1)" == "v1.2" ]] || (echo '❌ test `v1.1` (argument) failed' && exit 1)
 [[ "$(echo "v2.1" | go-next-tag)" == "v2.2" ]] || (echo '❌ test `v2.1` (piped) failed' && exit 1)
