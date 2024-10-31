@@ -65,6 +65,7 @@ jobs:
   next-tag:
     uses: idelchi/devenv/.github/workflows/next-tag.yml@dev
     if: ${{ ! startsWith(github.ref, 'refs/tags/') }}
+    needs: build
     with:
       artifact: go-next-tag
 
@@ -77,7 +78,7 @@ jobs:
       actions: write
     with:
       tag: ${{ needs.next-tag.outputs.next }}-beta
-  #
+
   release:
     uses: idelchi/devenv/.github/workflows/gorelease.yml@dev
     if: startsWith(github.ref, 'refs/tags/')
