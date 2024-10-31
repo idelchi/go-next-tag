@@ -27,20 +27,26 @@ Run `go-next-tag` with the desired flags. The available flags include:
 ```sh
 --version: Show the version information of go-next-tag.
 --bump: Bump the next tag. Possible values: patch, minor, major, none. Default is 'patch'.
---format: The format of the tag. Possible values: majorminor, semver. Default is 'majorminor'.
+--format: The format of the tag. Possible values: majorminor, semver, auto. Default is 'auto'.
 ```
 
 Example:
 
 ```sh
-go-next-tag --bump minor --format semver v1.2.3
+go-next-tag --bump minor v1.2.3
 ```
 
 ```sh
-echo "v1.2.3" | go-next-tag --bump minor --format semver
+echo "v1.2.3" | go-next-tag --bump minor
 ```
 
 If the version is provided as both stdin and an argument, the argument will take precedence.
+
+With `--format=auto`, it will be inferred as either `majorminor` or `semver` based on the input.
+If no input is given, it will default to semver.
+
+With `--bump`, you can specify the type of bump to apply to the version. The default is `patch`.
+If the format is `majorminor`, selecting `patch` will be analogous to `minor`.
 
 For more details on usage and configuration, run:
 
