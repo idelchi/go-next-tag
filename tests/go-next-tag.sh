@@ -3,7 +3,7 @@
 
 set -e
 
-trap 'echo "❌❌ Tests failed! ❌❌"' ERR # Exit if any command fails
+trap 'echo "🚨🚨 Tests failed! 🚨🚨"' ERR # Exit if any command fails
 
 go install ./cmd/go-next-tag
 
