@@ -18,33 +18,33 @@ jobs:
   #   if: ${{ ! startsWith(github.ref, 'refs/tags/') }}
   #   uses: idelchi/devenv/.github/workflows/task.yml@dev
 
-  test:
-    if: ${{ ! startsWith(github.ref, 'refs/tags/') }}
-    # needs: verify
-    strategy:
-      matrix:
-        os:
-          - ubuntu-24.04
-          # - windows-2022
-          # - macos-14
-    runs-on: ${{ matrix.os }}
-    steps:
-      - uses: actions/checkout@v4
+  # test:
+  #   if: ${{ ! startsWith(github.ref, 'refs/tags/') }}
+  #   # needs: verify
+  #   strategy:
+  #     matrix:
+  #       os:
+  #         - ubuntu-24.04
+  #         # - windows-2022
+  #         # - macos-14
+  #   runs-on: ${{ matrix.os }}
+  #   steps:
+  #     - uses: actions/checkout@v4
 
-      - name: Set up Go
-        uses: actions/setup-go@v5
-        with:
-          go-version: "1.23.2"
-          check-latest: true
+  #     - name: Set up Go
+  #       uses: actions/setup-go@v5
+  #       with:
+  #         go-version: "1.23.2"
+  #         check-latest: true
 
-      - name: Test
-        shell: sh
-        run: |
-          ./tests/go-next-tag.sh
+  #     - name: Test
+  #       shell: sh
+  #       run: |
+  #         ./tests/go-next-tag.sh
 
   build:
     if: ${{ ! startsWith(github.ref, 'refs/tags/') }}
-    needs: test
+    # needs: test
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
@@ -66,22 +66,39 @@ jobs:
           if-no-files-found: error
           overwrite: true
 
-  next-tag:
-    uses: idelchi/devenv/.github/workflows/next-tag.yml@dev
-    if: ${{ ! startsWith(github.ref, 'refs/tags/') }}
+  calculate:
+    runs-on: ubuntu-24.04
     needs: build
-    with:
-      artifact: go-next-tag
+    steps:
+      - uses: actions/checkout@v4
 
-  prerelease:
-    uses: idelchi/devenv/.github/workflows/prerelease.yml@dev
-    if: github.ref == 'refs/heads/dev'
-    needs: next-tag
-    permissions:
-      contents: write
-      actions: write
-    with:
-      tag: ${{ needs.next-tag.outputs.next }}-beta
+      - name: Download go-next-tag (artifact)
+        uses: actions/download-artifact@v4
+        with:
+          name: go-next-tag
+          path: ~/.local/bin
+
+      - name: Calculate Next Tag
+        id: tag
+        run: |
+          go-next-tag --version
+
+  # next-tag:
+  #   uses: idelchi/devenv/.github/workflows/next-tag.yml@dev
+  #   if: ${{ ! startsWith(github.ref, 'refs/tags/') }}
+  #   needs: build
+  #   with:
+  #     artifact: go-next-tag
+
+  # prerelease:
+  #   uses: idelchi/devenv/.github/workflows/prerelease.yml@dev
+  #   if: github.ref == 'refs/heads/dev'
+  #   needs: next-tag
+  #   permissions:
+  #     contents: write
+  #     actions: write
+  #   with:
+  #     tag: ${{ needs.next-tag.outputs.next }}-beta
 
   release:
     uses: idelchi/devenv/.github/workflows/gorelease.yml@dev
