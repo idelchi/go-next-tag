@@ -58,6 +58,9 @@ jobs:
         with:
           name: go-next-tag
           path: go-next-tag
+          retention-days: 1
+          if-no-files-found: error
+          overwrite: true
 
   next-tag:
     uses: idelchi/devenv/.github/workflows/next-tag.yml@dev
