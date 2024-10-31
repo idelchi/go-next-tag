@@ -3,6 +3,8 @@ package versioning
 
 import (
 	"fmt"
+	"strings"
+	"unicode"
 
 	"github.com/Masterminds/semver/v3"
 )
@@ -58,4 +60,38 @@ func ToSemVer(version string) (*semver.Version, error) {
 	}
 
 	return semVer, nil
+}
+
+// GetPrefix returns all leading non-digit characters of the version string.
+func GetPrefix(s string) string {
+	return getFirstNonDigits(s)
+}
+
+// StripPrefix removes all leading non-digit characters from the string.
+func StripPrefix(s string) string {
+	return strings.TrimPrefix(s, getFirstNonDigits(s))
+}
+
+// IsSemVerish checks if the version string is semver-like.
+func IsSemVerish(version string) bool {
+	_, err := semver.StrictNewVersion(version)
+
+	return err == nil
+}
+
+// getFirstNonDigits returns all leading non-digit characters until we hit the actual version part.
+func getFirstNonDigits(versionWithPrefix string) string {
+	for index := range len(versionWithPrefix) {
+		candidate := versionWithPrefix[index:]
+		// First check if it starts with a digit
+		if len(candidate) > 0 && !unicode.IsDigit(rune(candidate[0])) {
+			continue
+		}
+		// Then check if it's valid semver
+		if _, err := semver.NewVersion(candidate); err == nil {
+			return versionWithPrefix[:index]
+		}
+	}
+
+	return ""
 }

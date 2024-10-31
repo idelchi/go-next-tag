@@ -11,12 +11,12 @@ on:
       - "*"
 
 jobs:
+  info:
+    uses: idelchi/devenv/.github/workflows/info.yml@dev
+
   verify:
     if: ${{ ! startsWith(github.ref, 'refs/tags/') }}
-    uses: idelchi/devenv/.github/workflows/devenv-actions.yml@dev
-    with:
-      image: idelchi/devenv:dev
-      devenv: .devenv
+    uses: idelchi/devenv/.github/workflows/task.yml@dev
 
   test:
     if: ${{ ! startsWith(github.ref, 'refs/tags/') }}
@@ -29,11 +29,9 @@ jobs:
           - macos-14
     runs-on: ${{ matrix.os }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Set up Go
-        uses: actions/setup-go@v5
+      - uses: actions/setup-go@v5
         with:
           go-version: "1.23.2"
           check-latest: true
@@ -41,143 +39,58 @@ jobs:
       - name: Test
         shell: sh
         run: |
-          [ "$(go run ./cmd/go-next-tag v1.1)" = "v1.2" ] || (echo "test `v1.1` (argument) failed" && exit 1)
-          [ "$(echo "v2.1" | go run ./cmd/go-next-tag)" = "v2.2" ] || (echo "test `v2.1` (piped) failed" && exit 1)
-          [ "$(echo "v2.1" | go run ./cmd/go-next-tag v3.1)" = "v3.2" ] || (echo "test `v2.1/v3.1` (piped & argument) failed" && exit 1)
-          [ "$(go run ./cmd/go-next-tag)" = "v0.0" ] || (echo "test `no-input` failed" && exit 1)
+          ./tests/go-next-tag.sh
 
-          [ "$(go run ./cmd/go-next-tag --bump=major v1.1)" = "v2.0" ] || (echo "test (--bump=major) `v1.1` (argument) failed" && exit 1)
-          [ "$(echo "v2.1" | go run ./cmd/go-next-tag --bump=major)" = "v3.0" ] || (echo "test (--bump=major) `v2.1` (piped) failed" && exit 1)
-          [ "$(echo "v2.1" | go run ./cmd/go-next-tag --bump=major v3.1)" = "v4.0" ] || (echo "test (--bump=major) `v2.1/v3.1` (piped & argument) failed" && exit 1)
-          [ "$(go run ./cmd/go-next-tag --bump=major )" = "v0.0" ] || (echo "test (--bump=major) `no-input` failed" && exit 1)
-
-  last-tag:
+  build:
+    if: github.ref == 'refs/heads/dev'
     needs: test
     runs-on: ubuntu-24.04
-    if: github.ref == 'refs/heads/dev'
-    outputs:
-      tag: ${{ steps.tag.outputs.NEXT_TAG }}
-    env:
-      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: tag
-        id: tag
+      - uses: actions/setup-go@v5
+
+      - name: Build
         run: |
-          LAST_TAG=$(gh release list -L 1 --exclude-pre-releases --json tagName -q '.[0].tagName')
-          echo "LAST_TAG=${LAST_TAG}" >> ${GITHUB_ENV}
-          echo "LAST_TAG=${LAST_TAG}" >> ${GITHUB_OUTPUT}
+          go build ./cmd/go-next-tag
+          chmod +x go-next-tag
 
-          NEXT_TAG=$(go run ./cmd/go-next-tag ${LAST_TAG})
+      - name: Artifact to next-tag
+        uses: actions/upload-artifact@v4
+        with:
+          name: go-next-tag
+          path: go-next-tag
+          retention-days: 1
+          if-no-files-found: error
+          overwrite: true
 
-          echo "NEXT_TAG=${NEXT_TAG}" >> ${GITHUB_ENV}
-          echo "NEXT_TAG=${NEXT_TAG}" >> ${GITHUB_OUTPUT}
+  next-tag:
+    uses: idelchi/devenv/.github/workflows/next-tag.yml@dev
+    if: github.ref == 'refs/heads/dev'
+    needs: build
+    with:
+      artifact: go-next-tag
 
-      - name: check-env
-        run: |
-          echo "The last tag is '${LAST_TAG}'"
-          echo "The next tag is '${NEXT_TAG}'"
-
-  tag-prerelease:
-    needs: last-tag
+  prerelease:
+    uses: idelchi/devenv/.github/workflows/prerelease.yml@dev
+    if: github.ref == 'refs/heads/dev'
+    needs: next-tag
     permissions:
       contents: write
       actions: write
-    runs-on: ubuntu-24.04
-    if: github.ref == 'refs/heads/dev'
-    env:
-      TAG: ${{ needs.last-tag.outputs.tag }}-beta
-      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          fetch-tags: true
-
-      - name: delete old pre-release
-        run: |
-          gh release list --json tagName,isPrerelease -q '.[] | select(.isPrerelease == true) | .tagName' | xargs -I {} gh release delete {}
-        continue-on-error: true
-
-      - name: delete ${{ env.TAG }} release
-        run: |
-          gh release delete ${{ env.TAG }} --yes --cleanup-tag
-        continue-on-error: true
-
-      - name: delete ${{ env.TAG }} tag
-        run: |
-          git tag --delete ${{ env.TAG }}
-          git push origin --delete ${{ env.TAG }}
-        continue-on-error: true
-
-      - name: create ${{ env.TAG }} tag
-        run: |
-          git tag ${{ env.TAG }}
-          git push origin ${{ env.TAG }}
-
-      - name: run workflow for ${{ env.TAG }} tag
-        run: |
-          gh workflow run ${{ github.workflow }} --ref ${{ env.TAG }}
-
-  cleanup:
-    needs: tag-prerelease
-    permissions:
-      actions: write
-    runs-on: ubuntu-24.04
-    if: github.ref == 'refs/heads/dev' && always()
-    continue-on-error: true
-    env:
-      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: cleanup old builds
-        run: >
-          gh run list --limit 500
-          --workflow github-actions.yml
-          --status completed
-          --branch dev
-          --json databaseId
-          -q ".[].databaseId"
-          | xargs -n 1 gh run delete
-
-      - name: cleanup old builds
-        run: >
-          gh run list --limit 500 \
-            --workflow github-actions.yml \
-            --status completed \
-            --json databaseId,headBranch \
-            -q '.[] | select(.headBranch | endswith("-beta")) | .databaseId' \
-            | xargs -n 1 gh run delete
+    with:
+      tag: ${{ needs.next-tag.outputs.next }}-beta
 
   release:
+    uses: idelchi/devenv/.github/workflows/gorelease.yml@dev
+    if: startsWith(github.ref, 'refs/tags/')
+    needs: verify
     permissions:
       contents: write
-    runs-on: ubuntu-24.04
-    if: startsWith(github.ref, 'refs/tags/')
-    env:
-      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Set up Go
-        uses: actions/setup-go@v5
-
-      - name: Run GoReleaser
-        uses: goreleaser/goreleaser-action@v6
-        with:
-          distribution: goreleaser
-          version: "~> v2"
-          args: release --clean
+  cleanup:
+    uses: idelchi/devenv/.github/workflows/cleanup.yml@dev
+    if: github.ref == 'refs/heads/dev' && always()
+    needs: release
+    permissions:
+      actions: write

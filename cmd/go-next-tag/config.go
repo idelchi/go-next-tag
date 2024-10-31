@@ -13,8 +13,8 @@ type Config struct {
 	// The type of bump to perform
 	Bump string `validate:"required,oneof=patch minor major none"`
 	// The format of the tag
-	Format string `validate:"required,oneof=majorminor semver"`
-	// The prefix to use for the tag (e.g. "v")
+	Format string `validate:"required,oneof=majorminor semver auto"`
+	// The prefix of the tag, if any
 	Prefix string
 	// The tag to compare to
 	Tag string `validate:"version"`

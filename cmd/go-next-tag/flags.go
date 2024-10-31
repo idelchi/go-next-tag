@@ -10,24 +10,32 @@ import (
 	"github.com/spf13/viper"
 
 	"github.com/idelchi/go-next-tag/pkg/stdin"
+	"github.com/idelchi/go-next-tag/pkg/versioning"
 )
 
 // flags defines the command-line flags for the application.
 func flags() {
 	// General flags
-	pflag.Bool("version", false, "Show the version information and exit")
+	pflag.BoolP("version", "v", false, "Show the version information and exit")
 	pflag.BoolP("help", "h", false, "Show the help information and exit")
 	pflag.BoolP("show", "s", false, "Show the configuration and exit")
 
 	// Format flags
-	pflag.String(
+	pflag.StringP(
 		"bump",
-		"patch",
-		"Bump the next tag. Possible values: patch, minor, major, none. "+
-			"If the format is majorminor, selecting patch will be analogous to minor",
+		"b",
+		"minor",
+		`Bump the next tag. Possible values: 'patch', 'minor', 'major', 'none'.
+If the format is 'majorminor', selecting patch will be analogous to 'minor'`,
 	)
-	pflag.String("format", "majorminor", "The format of the tag. Possible values: majorminor, semver")
-	pflag.String("prefix", "v", "The prefix to use for the tag")
+	pflag.StringP(
+		"format",
+		"f",
+		"auto",
+		`The format of the tag. Possible values: 'majorminor', 'semver' or 'auto'.
+With auto, it will be inferred from the input.
+If no input is given, it will default to semver`,
+	)
 
 	pflag.CommandLine.SortFlags = false
 
@@ -70,11 +78,13 @@ func parseFlags() (cfg Config, err error) {
 		return cfg, fmt.Errorf("unmarshalling config: %w", err)
 	}
 
+	// Validate the input
+	err = validateInput(&cfg)
+
 	// Handle the commandline flags that exit the application
 	handleExitFlags(cfg)
 
-	// Validate the input
-	if err := validateInput(&cfg); err != nil {
+	if err != nil {
 		return cfg, fmt.Errorf("validating input: %w", err)
 	}
 
@@ -83,10 +93,10 @@ func parseFlags() (cfg Config, err error) {
 
 // validateInput validates the input configuration, selecting the tag from the command-line arguments or stdin.
 func validateInput(cfg *Config) error {
-	switch hasArgs, isPiped := pflag.NArg() != 0, stdin.IsPiped(); {
-	case hasArgs:
+	// Handle input source
+	if pflag.NArg() > 0 {
 		cfg.Tag = pflag.Arg(0)
-	case isPiped:
+	} else if stdin.IsPiped() {
 		input, err := stdin.Read()
 		if err != nil {
 			return fmt.Errorf("reading input: %w", err)
@@ -95,6 +105,18 @@ func validateInput(cfg *Config) error {
 		cfg.Tag = input
 	}
 
+	cfg.Prefix = versioning.GetPrefix(cfg.Tag)
+	cfg.Tag = versioning.StripPrefix(cfg.Tag)
+
+	// Auto-detect format and set defaults
+	if cfg.Format == "auto" {
+		cfg.Format = "semver" // default
+		if cfg.Tag != "" && !versioning.IsSemVerish(cfg.Tag) {
+			cfg.Format = "majorminor"
+		}
+	}
+
+	// Adjust bump type for majorminor format
 	if cfg.Format == "majorminor" && cfg.Bump == "patch" {
 		cfg.Bump = "minor"
 	}
