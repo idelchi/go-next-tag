@@ -81,8 +81,8 @@ jobs:
       - name: Calculate Next Tag
         id: tag
         run: |
-          go-next-tag --version || true
-          cat ~/.local/bin/go-next-tag
+          chmod +x ~/.local/bin/go-next-tag
+          go-next-tag --version
 
   # next-tag:
   #   uses: idelchi/devenv/.github/workflows/next-tag.yml@dev
