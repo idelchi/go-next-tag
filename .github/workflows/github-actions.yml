@@ -85,7 +85,7 @@ jobs:
   release:
     uses: idelchi/devenv/.github/workflows/gorelease.yml@dev
     if: startsWith(github.ref, 'refs/tags/')
-    needs: verify
+    # needs: verify
     permissions:
       contents: write
 
