@@ -66,40 +66,22 @@ jobs:
           if-no-files-found: error
           overwrite: true
 
-  calculate:
-    runs-on: ubuntu-24.04
+  next-tag:
+    uses: idelchi/devenv/.github/workflows/next-tag.yml@dev
+    if: ${{ ! startsWith(github.ref, 'refs/tags/') }}
     needs: build
-    steps:
-      - uses: actions/checkout@v4
+    with:
+      artifact: go-next-tag
 
-      - name: Download go-next-tag (artifact)
-        uses: actions/download-artifact@v4
-        with:
-          name: go-next-tag
-          path: ~/.local/bin
-
-      - name: Calculate Next Tag
-        id: tag
-        run: |
-          chmod +x ~/.local/bin/go-next-tag
-          go-next-tag --version
-
-  # next-tag:
-  #   uses: idelchi/devenv/.github/workflows/next-tag.yml@dev
-  #   if: ${{ ! startsWith(github.ref, 'refs/tags/') }}
-  #   needs: build
-  #   with:
-  #     artifact: go-next-tag
-
-  # prerelease:
-  #   uses: idelchi/devenv/.github/workflows/prerelease.yml@dev
-  #   if: github.ref == 'refs/heads/dev'
-  #   needs: next-tag
-  #   permissions:
-  #     contents: write
-  #     actions: write
-  #   with:
-  #     tag: ${{ needs.next-tag.outputs.next }}-beta
+  prerelease:
+    uses: idelchi/devenv/.github/workflows/prerelease.yml@dev
+    if: github.ref == 'refs/heads/dev'
+    needs: next-tag
+    permissions:
+      contents: write
+      actions: write
+    with:
+      tag: ${{ needs.next-tag.outputs.next }}-beta
 
   release:
     uses: idelchi/devenv/.github/workflows/gorelease.yml@dev
