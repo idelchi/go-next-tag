@@ -7,7 +7,7 @@
 ### From source
 
 ```sh
-go install github.com/idelchi/go-next-tag/cmd/go-next-tag@latest
+go install github.com/idelchi/go-next-tag@latest
 ```
 
 ### From installation script

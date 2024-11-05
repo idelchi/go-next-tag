@@ -1,3 +1,5 @@
+// Package flags provides command-line flag configuration
+// and parsing for determining version tag formats and bump rules.
 package flags
 
 import (

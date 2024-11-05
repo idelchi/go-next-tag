@@ -1,3 +1,4 @@
+// Package logic implements the core execution flow for generating the next version tag.
 package logic
 
 import (
@@ -7,8 +8,9 @@ import (
 	"github.com/idelchi/go-next-tag/internal/versioning"
 )
 
+// Run executes the core logic for generating the next version tag.
 func Run(version string) error {
-	cfg, err := parse.Parse()
+	cfg, err := parse.Parse(version)
 	if err != nil {
 		return fmt.Errorf("parsing flags: %w", err)
 	}
@@ -22,7 +24,7 @@ func Run(version string) error {
 		return fmt.Errorf("calculating next tag: %w", err)
 	}
 
-	fmt.Println(cfg.Prefix + versioning.ToFormat(nextTag, cfg.Format))
+	fmt.Println(cfg.Prefix + versioning.ToFormat(nextTag, cfg.Format)) //nolint:forbidigo // Print the next tag to stdout
 
 	return nil
 }

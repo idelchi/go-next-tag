@@ -1,3 +1,4 @@
+// Package config defines and validates the configuration structure for version tag generation and formatting.
 package config
 
 import (
@@ -5,7 +6,7 @@ import (
 
 	"github.com/go-playground/validator/v10"
 
-	versioning "github.com/idelchi/go-next-tag/pkg/versioning"
+	versioning "github.com/idelchi/go-next-tag/internal/versioning"
 )
 
 // Config represents the configuration for the go-next-tag application.

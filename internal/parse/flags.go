@@ -1,3 +1,4 @@
+// Package parse handles configuration parsing from command-line flags and environment variables, with input validation and format detection.
 package parse
 
 import (
@@ -10,7 +11,8 @@ import (
 
 	flags "github.com/idelchi/go-next-tag/internal/commands"
 	"github.com/idelchi/go-next-tag/internal/config"
-	"github.com/idelchi/go-next-tag/pkg/versioning"
+	"github.com/idelchi/go-next-tag/internal/versioning"
+	"github.com/idelchi/godyl/pkg/pretty"
 	"github.com/idelchi/gogen/pkg/stdin"
 )
 
@@ -56,17 +58,19 @@ func handleExitFlags(cfg config.Config, version string) {
 	// Check if the version flag was provided
 	if viper.GetBool("version") {
 		fmt.Println(version)
+
 		os.Exit(0)
 	}
 
 	// Check if the help flag was provided
 	if viper.GetBool("help") {
 		pflag.Usage()
+
 		os.Exit(0)
 	}
 
 	if viper.GetBool("show") {
-		fmt.Println(PrintJSON(cfg))
+		pretty.PrintJSON(cfg)
 
 		os.Exit(0)
 	}
