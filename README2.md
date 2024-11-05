@@ -24,10 +24,10 @@ curl -sSL https://raw.githubusercontent.com/idelchi/go-next-tag/refs/heads/dev/i
 ## Usage
 
 ```sh
-go-next-tag [flags] [version|STDIN]
+go-next-tag [flags] [version]
 ```
 
-### Flags and Environment Variables
+### Global Flags and Environment Variables
 
 | Flag         | Environment Variable | Description                    | Default | Valid Values                      |
 | ------------ | -------------------- | ------------------------------ | ------- | --------------------------------- |
@@ -55,12 +55,8 @@ go-next-tag --bump minor v1.2.3
 echo "v1.2.3" | go-next-tag --bump minor
 # Output: v1.3.0
 
-# Use majorminor format implicitly
-go-next-tag v1.2
-# Output: v1.3
-
 # Use majorminor format explicitly
-go-next-tag --format majorminor v1.2.3
+go-next-tag --format majorminor --bump minor v1.2
 # Output: v1.3
 ```
 

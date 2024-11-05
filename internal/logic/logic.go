@@ -24,7 +24,9 @@ func Run(version string) error {
 		return fmt.Errorf("calculating next tag: %w", err)
 	}
 
-	fmt.Println(cfg.Prefix + versioning.ToFormat(nextTag, cfg.Format)) //nolint:forbidigo // Print the next tag to stdout
+	fmt.Println(
+		cfg.Prefix + versioning.ToFormat(nextTag, cfg.Format),
+	) 
 
 	return nil
 }

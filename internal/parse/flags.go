@@ -1,4 +1,5 @@
-// Package parse handles configuration parsing from command-line flags and environment variables, with input validation and format detection.
+// Package parse handles configuration parsing from command-line flags
+// and environment variables, with input validation and format detection.
 package parse
 
 import (
