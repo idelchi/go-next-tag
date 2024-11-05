@@ -10,7 +10,7 @@ import (
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 
-	flags "github.com/idelchi/go-next-tag/internal/commands"
+	"github.com/idelchi/go-next-tag/internal/commands"
 	"github.com/idelchi/go-next-tag/internal/config"
 	"github.com/idelchi/go-next-tag/internal/versioning"
 	"github.com/idelchi/godyl/pkg/pretty"
@@ -21,7 +21,7 @@ import (
 //   - command-line flags
 //   - environment variables
 func Parse(version string) (cfg config.Config, err error) {
-	flags.Flags()
+	commands.Flags()
 
 	// Parse the command-line flags
 	pflag.Parse()
