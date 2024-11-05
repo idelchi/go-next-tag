@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/idelchi/go-next-tag/pkg/versioning"
+	"github.com/idelchi/go-next-tag/internal/versioning"
 )
 
 func TestNextMajorMinor(t *testing.T) {
