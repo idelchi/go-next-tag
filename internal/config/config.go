@@ -2,52 +2,52 @@
 package config
 
 import (
+	"errors"
 	"fmt"
 
-	"github.com/go-playground/validator/v10"
-
-	versioning "github.com/idelchi/go-next-tag/internal/versioning"
+	"github.com/idelchi/gogen/pkg/validator"
 )
+
+// ErrUsage indicates an error in command-line usage or configuration.
+var ErrUsage = errors.New("usage error")
 
 // Config represents the configuration for the go-next-tag application.
 type Config struct {
 	// The type of bump to perform
 	Bump string `validate:"required,oneof=patch minor major none"`
+
 	// The format of the tag
 	Format string `validate:"required,oneof=majorminor semver auto"`
+
 	// The prefix of the tag, if any
 	Prefix string
+
 	// The tag to compare to
 	Tag string `validate:"version"`
+
+	// Show the configuration and exit
+	Show bool
 }
 
-// Validate validates the configuration against the struct tags.
+// Validate performs configuration validation using the validator package.
+// It returns a wrapped ErrUsage if any validation rules are violated.
 func (c Config) Validate() error {
-	validate := validator.New()
+	validator := validator.NewValidator()
 
-	// Register the custom rule "version"
-	err := validate.RegisterValidation("version", validateSemVer)
-	if err != nil {
-		return fmt.Errorf("registering custom validation: %w", err)
+	if err := registerVersion(validator); err != nil {
+		return fmt.Errorf("registering version: %w", err)
 	}
 
-	// Validate the configuration
-	if err := validate.Struct(c); err != nil {
-		return fmt.Errorf("validating configuration: %w", err)
+	errs := validator.Validate(c)
+
+	switch {
+	case errs == nil:
+		return nil
+	case len(errs) == 1:
+		return fmt.Errorf("%w: %w", ErrUsage, errs[0])
+	case len(errs) > 1:
+		return fmt.Errorf("%ws:\n%w", ErrUsage, errors.Join(errs...))
 	}
 
 	return nil
-}
-
-// validateSemVer validates the format of the `Tag` field.
-// It expects the field to be either semver-compatible or empty.
-func validateSemVer(fl validator.FieldLevel) bool {
-	value := fl.Field().String()
-	if value == "" {
-		return true
-	}
-
-	_, err := versioning.ToSemVer(value)
-
-	return err == nil
 }

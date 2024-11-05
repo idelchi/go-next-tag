@@ -16,7 +16,7 @@ func Run(version string) error {
 	}
 
 	if err := cfg.Validate(); err != nil {
-		return fmt.Errorf("validating configuration: %w", err)
+		return fmt.Errorf("application configuration: %w", err)
 	}
 
 	nextTag, err := versioning.Next(cfg.Tag, cfg.Bump)
@@ -24,9 +24,9 @@ func Run(version string) error {
 		return fmt.Errorf("calculating next tag: %w", err)
 	}
 
-	fmt.Println(
+	fmt.Println( //nolint:forbidigo // Print the next tag to stdout
 		cfg.Prefix + versioning.ToFormat(nextTag, cfg.Format),
-	) 
+	)
 
 	return nil
 }

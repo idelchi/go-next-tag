@@ -6,7 +6,6 @@ toolchain go1.23.2
 
 require (
 	github.com/Masterminds/semver/v3 v3.2.1
-	github.com/go-playground/validator/v10 v10.22.1
 	github.com/idelchi/godyl v0.0.0-20241029091045-af98851a0cee
 	github.com/idelchi/gogen v0.0.0-20241105121434-33bff46b48cb
 	github.com/spf13/pflag v1.0.5
@@ -20,6 +19,7 @@ require (
 	github.com/gabriel-vasile/mimetype v1.4.6 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
+	github.com/go-playground/validator/v10 v10.22.1 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect
 	github.com/magiconair/properties v1.8.7 // indirect
