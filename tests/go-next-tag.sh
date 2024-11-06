@@ -5,7 +5,7 @@ set -e
 
 trap 'echo "🚨🚨 Tests failed! 🚨🚨"' ERR # Exit if any command fails
 
-go install ./cmd/go-next-tag
+go install .
 
 echo "🧪 Testing MAJOR-MINOR format"
 
