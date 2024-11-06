@@ -6,7 +6,7 @@
             "type": "go",
             "request": "launch",
             "mode": "debug",
-            "program": "cmd/go-next-tag/main.go",
+            "program": "main.go",
             "args": ["-w", "file"]
         }
     ]
