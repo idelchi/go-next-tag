@@ -60,7 +60,7 @@ jobs:
 
       - name: Build
         run: |
-          go build ./cmd/go-next-tag
+          go build .
           chmod +x go-next-tag
 
       - name: Artifact to next-tag
