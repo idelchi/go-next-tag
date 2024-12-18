@@ -64,12 +64,12 @@ func ToSemVer(version string) (*semver.Version, error) {
 
 // GetPrefix returns all leading non-digit characters of the version string.
 func GetPrefix(s string) string {
-	return getFirstNonDigits(s)
+	return GetFirstNonDigits(s)
 }
 
 // StripPrefix removes all leading non-digit characters from the string.
 func StripPrefix(s string) string {
-	return strings.TrimPrefix(s, getFirstNonDigits(s))
+	return strings.TrimPrefix(s, GetFirstNonDigits(s))
 }
 
 // IsSemVerish checks if the version string is semver-like.
@@ -79,18 +79,30 @@ func IsSemVerish(version string) bool {
 	return err == nil
 }
 
-// getFirstNonDigits returns all leading non-digit characters until we hit the actual version part.
-func getFirstNonDigits(versionWithPrefix string) string {
-	for index := range len(versionWithPrefix) {
-		candidate := versionWithPrefix[index:]
+// ToVersion attempts to convert the version string to a semantic version.
+func ToVersion(version string) *semver.Version {
+	for index := range len(version) {
+		candidate := version[index:]
 		// First check if it starts with a digit
 		if len(candidate) > 0 && !unicode.IsDigit(rune(candidate[0])) {
 			continue
 		}
 		// Then check if it's valid semver
-		if _, err := semver.NewVersion(candidate); err == nil {
-			return versionWithPrefix[:index]
+		if version, err := semver.NewVersion(candidate); err == nil {
+			return version
 		}
+	}
+
+	return nil
+}
+
+// GetFirstNonDigits returns all leading non-digit characters until we hit the actual version part.
+func GetFirstNonDigits(versionWithPrefix string) string {
+	if version := ToVersion(versionWithPrefix); version != nil {
+		// Find out how much of the original string ToVersion skipped
+		versionStr := version.String()
+		index := strings.Index(versionWithPrefix, versionStr)
+		return versionWithPrefix[:index]
 	}
 
 	return ""
