@@ -64,7 +64,7 @@ func ToSemVer(version string) (*semver.Version, error) {
 
 // GetPrefix returns all leading non-digit characters of the version string.
 func GetPrefix(s string) string {
-	return getFirstNonDigits(s)
+	return getFirstNonVersionLike(s)
 }
 
 // StripPrefix removes all leading non-digit characters from the string.
@@ -84,8 +84,8 @@ func startsWithNonDigit(s string) bool {
 	return len(s) > 0 && !unicode.IsDigit(rune(s[0]))
 }
 
-// GetFirstNonDigits returns all leading non-digit characters until we hit the actual version part.
-func getFirstNonDigits(versionWithPrefix string) string {
+// getFirstNonVersionLike returns all leading non-digit characters until it finds a version-like string.
+func getFirstNonVersionLike(versionWithPrefix string) string {
 	for index := range len(versionWithPrefix) {
 		candidate := versionWithPrefix[index:]
 		if startsWithNonDigit(candidate) {
