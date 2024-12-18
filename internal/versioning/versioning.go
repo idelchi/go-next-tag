@@ -79,23 +79,6 @@ func IsSemVerish(version string) bool {
 	return err == nil
 }
 
-// ToVersion attempts to convert the version string to a semantic version.
-func ToVersion(version string) *semver.Version {
-	for index := range len(version) {
-		candidate := version[index:]
-		// First check if it starts with a digit
-		if startsWithNonDigit(candidate) {
-			continue
-		}
-		// Then check if it's valid semver
-		if version, err := semver.NewVersion(candidate); err == nil {
-			return version
-		}
-	}
-
-	return nil
-}
-
 // startsWithNonDigit checks if the string starts with a non-digit character.
 func startsWithNonDigit(s string) bool {
 	return len(s) > 0 && !unicode.IsDigit(rune(s[0]))
@@ -105,12 +88,11 @@ func startsWithNonDigit(s string) bool {
 func GetFirstNonDigits(versionWithPrefix string) string {
 	for index := range len(versionWithPrefix) {
 		candidate := versionWithPrefix[index:]
-		// First check if it starts with a digit
 		if startsWithNonDigit(candidate) {
 			continue
 		}
-		// Then check if it's valid semver by attempting to use ToVersion
-		if version := ToVersion(candidate); version != nil {
+
+		if _, err := semver.NewVersion(candidate); err == nil {
 			return versionWithPrefix[:index]
 		}
 	}
