@@ -102,6 +102,7 @@ func GetFirstNonDigits(versionWithPrefix string) string {
 		// Find out how much of the original string ToVersion skipped
 		versionStr := version.String()
 		index := strings.Index(versionWithPrefix, versionStr)
+
 		return versionWithPrefix[:index]
 	}
 
