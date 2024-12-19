@@ -31,7 +31,8 @@ go-next-tag [flags] [version|STDIN]
 
 | Flag         | Environment Variable | Description                    | Default | Valid Values                      |
 | ------------ | -------------------- | ------------------------------ | ------- | --------------------------------- |
-| `--version`  | -                    | Show version information       | -       | -                                 |
+| `--version`  | -                    | Show version                   | -       | -                                 |
+| `--show`     | -                    | Show configuration             | -       | -                                 |
 | `--bump`     | `GO_NEXT_TAG_BUMP`   | Version component to increment | `patch` | `patch`, `minor`, `major`, `none` |
 | `--format`   | `GO_NEXT_TAG_FORMAT` | Version format to use          | `auto`  | `majorminor`, `semver`, `auto`    |
 | `-h, --help` | -                    | Help for go-next-tag           | -       | -                                 |
