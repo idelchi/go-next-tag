@@ -1,8 +1,6 @@
 module github.com/idelchi/go-next-tag
 
-go 1.23.0
-
-toolchain go1.23.2
+go 1.25.1
 
 require (
 	github.com/Masterminds/semver/v3 v3.2.1

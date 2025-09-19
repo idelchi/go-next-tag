@@ -9,14 +9,6 @@
 
 ## Installation
 
-### From source
-
-```sh
-go install github.com/idelchi/go-next-tag@latest
-```
-
-### From installation script
-
 ```sh
 curl -sSL https://raw.githubusercontent.com/idelchi/go-next-tag/refs/heads/main/install.sh | sh -s -- -d ~/.local/bin
 ```
@@ -27,7 +19,7 @@ curl -sSL https://raw.githubusercontent.com/idelchi/go-next-tag/refs/heads/main/
 go-next-tag [flags] [version|STDIN]
 ```
 
-### Flags and Environment Variables
+### Configuration
 
 | Flag         | Environment Variable | Description                    | Default | Valid Values                      |
 | ------------ | -------------------- | ------------------------------ | ------- | --------------------------------- |
@@ -67,7 +59,7 @@ go-next-tag --format majorminor v1.2.3
 
 ### Notes
 
-- When version is provided both as stdin and argument, the argument takes precedence
+- When version is provided as both stdin and argument, the argument takes precedence
 - With `--format=auto`, format is inferred from input, defaulting to semver if no input
 - When using `majorminor` format, `--bump patch` is equivalent to `--bump minor`
 
